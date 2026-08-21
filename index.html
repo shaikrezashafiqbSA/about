@@ -4,71 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shaik Reza Shafiq | Portfolio</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f6f9;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0;
-            position: relative;
-        }
+    <meta name="description" content="Portfolio of Shaik Reza Shafiq — resume, local-AI tools, and an oasis masjid where a scholar examines what you claim to know.">
 
-        /* Two full-viewport photo layers that slowly crossfade into each other,
-           with a gentle zoom (Ken Burns) so the page reads as "alive" without
-           the cost/jank of a real cloth-simulation flag-wave effect. Missing
-           files here just render nothing -- no broken-image icon, no error. */
-        .bg-layer {
-            position: fixed; inset: 0;
-            background-size: cover; background-position: center;
-            opacity: 0;
-            animation: bgCrossfade 18s ease-in-out infinite;
-            pointer-events: none;
-        }
-        .bg-layer-1 { background-image: url('assets/bg-1.jpg'); animation-delay: 0s; }
-        .bg-layer-2 { background-image: url('assets/bg-2.jpg'); animation-delay: 9s; }
-        @keyframes bgCrossfade {
-            0%   { opacity: 0; transform: scale(1.02); }
-            8%   { opacity: 1; transform: scale(1.04); }
-            42%  { opacity: 1; transform: scale(1.08); }
-            50%  { opacity: 0; transform: scale(1.1); }
-            100% { opacity: 0; transform: scale(1.1); }
-        }
-        .bg-wash {
-            position: fixed; inset: 0;
-            background: rgba(244, 246, 249, 0.82);
-            pointer-events: none;
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .bg-layer { animation: none; opacity: 0; }
-        }
-
-        .card {
-            position: relative;
-            background: white; padding: 40px; border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            text-align: center; max-width: 400px; width: 100%;
-            margin: 24px;
-        }
-        h1 { color: #1e293b; margin: 0 0 8px 0; font-size: 24px; }
-        p { color: #64748b; margin-bottom: 24px; }
-        .btn { display: block; background: #0056b3; color: white; padding: 14px; margin: 12px 0; text-decoration: none; border-radius: 6px; font-weight: 600; }
-        .btn-alt { background: #10b981; }
-        .btn-ask { background: #7c3aed; }
-        .btn-project { background: white; color: #1e293b; border: 2px solid #e2e8f0; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="web/atelier/atelier.css">
 </head>
 <body>
-    <div class="bg-layer bg-layer-1"></div>
-    <div class="bg-layer bg-layer-2"></div>
-    <div class="bg-wash"></div>
+    <!-- The courtyard. Everything else floats over it. -->
+    <canvas id="stage"></canvas>
 
-    <div class="card">
-        <h1>Shaik Reza Shafiq</h1>
-        <p>Professional Hub & Resume Scanner</p>
-        <a href="web/render.html" class="btn">📄 View My Styled CV</a>
-        <a href="web/matcher.html" class="btn btn-alt">🤖 Open Local AI Matcher</a>
-        <a href="web/ask.html" class="btn btn-ask">💬 Ask Me Anything</a>
-        <a href="https://shaikrezashafiqbsa.github.io/steps-of-muhammad/" class="btn btn-project" target="_blank" rel="noopener noreferrer">🕌 Steps of Muhammad (Project) ↗</a>
+    <div id="stage-fallback">
+        <p>
+            This page draws an oasis masjid with WebGL, which your browser has turned off or
+            does not support. The rest of the site works normally — use the menu.
+        </p>
     </div>
+
+    <!-- Floats above the scholar's head; positioned each frame by scene.js. -->
+    <button id="npc-marker" type="button" aria-label="Speak with Al-Kātib"></button>
+
+    <button id="menu-toggle" type="button" aria-label="Toggle menu">☰</button>
+
+    <nav id="menu">
+        <div class="crest">
+            <div>
+                <h1>Shaik Reza Shafiq</h1>
+                <span class="tag">Change management · quant · local AI</span>
+            </div>
+            <span class="seal arabic">ﷺ</span>
+        </div>
+
+        <p class="menu-label">The Majlis</p>
+
+        <button class="menu-item primary" id="speak-npc" type="button">
+            <span class="glyph">🕌</span>
+            <span>Speak with Al-Kātib</span>
+            <span class="badge" id="quest-badge"></span>
+        </button>
+
+        <button class="menu-item" id="open-atlas" type="button">
+            <span class="glyph">🌳</span>
+            <span>Skill Atlas</span>
+        </button>
+
+        <p class="menu-label">Portfolio</p>
+
+        <a class="menu-item" href="web/render.html">
+            <span class="glyph">📄</span>
+            <span>View my styled CV</span>
+        </a>
+
+        <a class="menu-item" href="web/matcher.html">
+            <span class="glyph">🤖</span>
+            <span>Local AI job matcher</span>
+        </a>
+
+        <a class="menu-item" href="web/ask.html">
+            <span class="glyph">💬</span>
+            <span>Ask me anything</span>
+        </a>
+
+        <a class="menu-item" href="https://shaikrezashafiqbsa.github.io/steps-of-muhammad/"
+           target="_blank" rel="noopener noreferrer">
+            <span class="glyph">👣</span>
+            <span>Steps of Muhammad</span>
+            <span class="ext">↗</span>
+        </a>
+
+        <div class="menu-foot">
+            The courtyard, the masjid and the scholar are drawn from primitives at runtime —
+            no 3D assets, no server, no API keys. Everything you tell him stays in this browser.
+        </div>
+    </nav>
+
+    <div id="ticker"></div>
+
+    <div id="veil" class="veil"></div>
+
+    <!-- The dialogue. Contents are built by app.js per exchange. -->
+    <section id="majlis" aria-live="polite">
+        <header class="majlis-head">
+            <span class="portrait">🧔🏽‍♂️</span>
+            <div>
+                <div class="name">Al-Kātib</div>
+                <div class="role">Keeper of your scrolls</div>
+            </div>
+            <span class="arabic">الكاتب</span>
+            <button class="closer" id="majlis-close" type="button" aria-label="Close">✕</button>
+        </header>
+        <div class="majlis-body" id="majlis-body"></div>
+    </section>
+
+    <!-- The skill tree. -->
+    <div id="atlas">
+        <div class="atlas-shell">
+            <div class="atlas-head">
+                <h2>Skill Atlas</h2>
+                <span class="arabic">شجرة العلم</span>
+                <span class="spacer"></span>
+                <button class="btn" id="close-atlas" type="button">Close</button>
+            </div>
+            <p class="atlas-sub">
+                Every node here is something Al-Kātib can examine you on. A node stays locked until
+                what it rests on is verified, and it is only verified when you have said it back to
+                him from memory. Pick any open node to be tested on it now.
+            </p>
+            <div class="legend">
+                <span><i style="background:#6a7b80"></i> locked</span>
+                <span><i style="background:#e0b552"></i> ready</span>
+                <span><i style="background:#d98a4a"></i> unresolved</span>
+                <span><i style="background:#4a9c78"></i> verified</span>
+                <span><i style="background:linear-gradient(120deg,#e0b552,#4a9c78)"></i> mastered</span>
+            </div>
+            <div id="atlas-body"></div>
+        </div>
+    </div>
+
+    <script type="module" src="web/atelier/app.js"></script>
+    <noscript>
+        <div style="position:fixed;inset:0;display:grid;place-items:center;background:#f4f6f9;color:#1e293b;padding:40px;text-align:center;font-family:sans-serif;z-index:99">
+            <div>
+                <h1>Shaik Reza Shafiq</h1>
+                <p>This page needs JavaScript. The CV is readable directly:</p>
+                <p><a href="content/Shaik_Reza_Shafiq_Resume.md">Shaik_Reza_Shafiq_Resume.md</a></p>
+            </div>
+        </div>
+    </noscript>
 </body>
 </html>

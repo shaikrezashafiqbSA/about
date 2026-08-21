@@ -1,19 +1,17 @@
 # Background images
 
-`index.html` looks for two files here and crossfades between them:
+**No longer used.** `index.html` used to crossfade `bg-1.jpg` and `bg-2.jpg` as a
+full-viewport backdrop. That backdrop has been replaced by the 3D oasis masjid the
+page now renders itself (see `web/atelier/README.md`), which draws its own sky,
+sand and light.
 
-- `assets/bg-1.jpg`
-- `assets/bg-2.jpg`
+`bg-1.jpg` and `bg-2.jpg` are still here and are safe to delete if you don't want
+them for anything else — nothing references them.
 
-Drop your own images at those exact filenames and reload the page — no code changes needed. If the files are missing, the page falls back to the plain background colour it already had; missing background-images don't show a broken-image icon or throw an error.
+## If you want a photographic backdrop again
 
-## Recommendations
-
-- **Landscape, roughly 1920×1080 or larger.** Both images cover the full viewport, so anything smaller will upscale and blur.
-- **Similar tone/exposure between the two.** They crossfade into each other every ~16s, and a big brightness jump between them reads as a flash rather than a drift.
-- **Keep the center of the frame relatively uncluttered.** The card sits centered on top; a busy midground fights the resume text.
-- **JPEG at ~80% quality** is a good size/quality tradeoff for a background photo; keep each file well under 1MB if possible so the page stays fast to load.
-
-## Why crossfade instead of a literal flag-wave
-
-A cloth-simulation wave effect needs an SVG displacement filter or canvas physics loop — real GPU/CPU cost, and easy to make look janky on lower-end laptops. The slow crossfade + subtle zoom (Ken Burns) used here gets the same "the page is alive" feeling at effectively zero performance cost, which fits a resume site better: the motion should support the content, not compete with it.
+The crossfade was about 25 lines of CSS in `index.html`: two fixed `.bg-layer`
+elements with a `bgCrossfade` keyframe animation and a translucent `.bg-wash` over
+the top. It's in the git history (`git log -- index.html`) if it's ever wanted back.
+Note that it and the WebGL canvas would fight for the same space — you'd want one or
+the other, not both.
