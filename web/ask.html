@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Me Anything — Shaik Reza Shafiq</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 20px; background: #fafafa; color: #1e293b; }
+        h2 { margin-bottom: 4px; }
+        .sub { font-size: 14px; color: #64748b; margin-top: 0; margin-bottom: 8px; }
+        .note { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+        .back-link { display: inline-block; margin-bottom: 16px; color: #64748b; text-decoration: none; font-size: 14px; }
+
+        .engine-picker { display: flex; gap: 10px; margin-bottom: 16px; }
+        .engine-option { flex: 1; border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; cursor: pointer; background: white; }
+        .engine-option.active { border-color: #7c3aed; background: #f5f3ff; }
+        .engine-option h3 { margin: 0 0 4px 0; font-size: 14px; }
+        .engine-option p { margin: 0; font-size: 12px; color: #64748b; }
+
+        #log-window { background: #f1f5f9; border-left: 4px solid #7c3aed; padding: 12px; margin-bottom: 16px; font-size: 13px; color: #475569; white-space: pre-wrap; }
+
+        #thread { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .msg { padding: 12px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; max-width: 90%; }
+        .msg.user { align-self: flex-end; background: #7c3aed; color: white; border-bottom-right-radius: 2px; }
+        .msg.bot { align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px; }
+        .msg.bot.pending { color: #94a3b8; font-style: italic; }
+
+        .composer { display: flex; gap: 8px; }
+        .composer input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; }
+        .composer button { background: #7c3aed; color: white; border: none; padding: 12px 20px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+        .composer button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .suggestion { font-size: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 999px; padding: 6px 12px; cursor: pointer; color: #475569; }
+        .suggestion:hover { border-color: #7c3aed; color: #7c3aed; }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">← Back Home</a>
+    <h2>Ask Me Anything</h2>
+    <p class="sub">A small on-device AI answering from a short bio I wrote about myself. Nothing is sent to a server.</p>
+    <p class="note">Each question is answered fresh, with no memory of earlier questions in this session — this keeps the model small enough to run in your browser without a download stall.</p>
+
+    <div class="engine-picker">
+        <div class="engine-option active" id="opt-webllm">
+            <h3>🖥️ WebLLM</h3>
+            <p>Runs a small model on your GPU (WebGPU). Works in any recent Chrome/Edge, no setup.</p>
+        </div>
+        <div class="engine-option" id="opt-chromeai">
+            <h3>✨ Chrome Built-in AI</h3>
+            <p>Uses Chrome's on-device Gemini Nano. Faster, no download, needs a flag enabled first.</p>
+        </div>
+    </div>
+
+    <div id="log-window">Setting up processing framework...</div>
+
+    <div class="suggestions" id="suggestions"></div>
+    <div id="thread"></div>
+
+    <div class="composer">
+        <input id="question-input" type="text" placeholder="Ask about my background, my pivot, a project..." disabled />
+        <button id="ask-btn" disabled>Ask</button>
+    </div>
+
+    <script type="module">
+        const logWindow = document.getElementById("log-window");
+        const askBtn = document.getElementById("ask-btn");
+        const questionInput = document.getElementById("question-input");
+        const thread = document.getElementById("thread");
+        const optWebllm = document.getElementById("opt-webllm");
+        const optChromeai = document.getElementById("opt-chromeai");
+        const suggestionsBox = document.getElementById("suggestions");
+
+        let engine = "webllm";
+        let webllmEngine = null;
+        let chromeSession = null;
+        let bio = "";
+
+        const SUGGESTIONS = [
+            "Why did you move from quant to change management?",
+            "What's your biggest measurable win?",
+            "What kind of role are you looking for now?",
+            "What's the DAMS project at NHB?"
+        ];
+
+        fetch('../content/elevator_pitch.md')
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+            .then(t => {
+                bio = t.trim();
+                SUGGESTIONS.forEach(q => {
+                    const chip = document.createElement('span');
+                    chip.className = 'suggestion';
+                    chip.textContent = q;
+                    chip.onclick = () => { questionInput.value = q; askBtn.click(); };
+                    suggestionsBox.append(chip);
+                });
+            })
+            .catch(err => {
+                const hint = location.protocol === 'file:'
+                    ? ' Page opened via file:// — browsers block local file reads from script; serve over HTTP.'
+                    : '';
+                logWindow.style.borderLeftColor = "#ef4444";
+                logWindow.innerText = "Could not load the bio: " + err + hint;
+            });
+
+        function buildPrompt(question) {
+            return `You are answering questions on behalf of Shaik Reza Shafiq, in first person, using ONLY the bio below. Do not invent facts, dates, or numbers not present in the bio. If the question asks something the bio does not cover, say so plainly and suggest the visitor check the full CV. Keep the answer under 120 words.
+
+BIO:
+${bio}
+
+QUESTION: ${question}`;
+        }
+
+        // Background init for one engine can outlive the user switching to the other engine.
+        // Every UI write below is gated on `engine === "..."` so a stale callback can't clobber
+        // the status/button state of whichever engine is now actually selected.
+
+        async function initWebLLM() {
+            if (engine === "webllm") { setComposerEnabled(false); logWindow.innerText = "Loading WebLLM module..."; }
+            try {
+                const webllm = await import("https://esm.run/@mlc-ai/web-llm");
+                const modelProfile = "Llama-3-8B-Instruct-q4f16_1-MLC";
+                webllmEngine = await webllm.CreateMLCEngine(modelProfile, {
+                    initProgressCallback: (report) => { if (engine === "webllm") logWindow.innerText = report.text; }
+                });
+                if (engine === "webllm") {
+                    logWindow.innerText = "WebLLM engine ready — running locally on your GPU.";
+                    setComposerEnabled(true);
+                }
+            } catch (err) {
+                if (engine === "webllm") {
+                    logWindow.style.borderLeftColor = "#ef4444";
+                    logWindow.innerText = "WebGPU failure: " + err + "\nRun using an updated instance of Google Chrome or Edge.";
+                }
+            }
+        }
+
+        async function initChromeAI() {
+            if (engine === "chromeai") { setComposerEnabled(false); logWindow.innerText = "Checking Chrome AI availability..."; }
+            const LM = (typeof self !== "undefined" && "LanguageModel" in self) ? self.LanguageModel : null;
+            if (!LM) {
+                if (engine === "chromeai") {
+                    logWindow.style.borderLeftColor = "#ef4444";
+                    logWindow.innerText = "Chrome's built-in AI (LanguageModel API) isn't available in this browser. Try WebLLM instead.";
+                }
+                return;
+            }
+            try {
+                const availability = await LM.availability();
+                if (availability === "unavailable") {
+                    if (engine === "chromeai") {
+                        logWindow.style.borderLeftColor = "#ef4444";
+                        logWindow.innerText = "Gemini Nano reports 'unavailable' on this device/browser. Try WebLLM instead.";
+                    }
+                    return;
+                }
+                if (engine === "chromeai") {
+                    logWindow.innerText = availability === "downloadable" || availability === "downloading"
+                        ? "Downloading Gemini Nano on-device model..."
+                        : "Starting Gemini Nano session...";
+                }
+                chromeSession = await LM.create({
+                    monitor(m) {
+                        m.addEventListener("downloadprogress", (e) => {
+                            if (engine === "chromeai") logWindow.innerText = `Downloading Gemini Nano model: ${Math.round(e.loaded * 100)}%`;
+                        });
+                    }
+                });
+                if (engine === "chromeai") {
+                    logWindow.innerText = "Chrome Built-in AI (Gemini Nano) ready — running fully on-device.";
+                    setComposerEnabled(true);
+                }
+            } catch (err) {
+                if (engine === "chromeai") {
+                    logWindow.style.borderLeftColor = "#ef4444";
+                    logWindow.innerText = "Chrome Built-in AI failed to initialize: " + err;
+                }
+            }
+        }
+
+        function setComposerEnabled(enabled) {
+            askBtn.disabled = !enabled;
+            questionInput.disabled = !enabled;
+        }
+
+        function selectEngine(next) {
+            if (engine === next) return;
+            engine = next;
+            optWebllm.classList.toggle("active", next === "webllm");
+            optChromeai.classList.toggle("active", next === "chromeai");
+            logWindow.style.borderLeftColor = "#7c3aed";
+            if (next === "webllm") {
+                webllmEngine ? (logWindow.innerText = "WebLLM engine ready.", setComposerEnabled(true)) : initWebLLM();
+            } else {
+                chromeSession ? (logWindow.innerText = "Chrome Built-in AI ready.", setComposerEnabled(true)) : initChromeAI();
+            }
+        }
+
+        optWebllm.onclick = () => selectEngine("webllm");
+        optChromeai.onclick = () => selectEngine("chromeai");
+
+        function addMessage(role, text) {
+            const el = document.createElement('div');
+            el.className = 'msg ' + role;
+            el.textContent = text;
+            thread.append(el);
+            el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            return el;
+        }
+
+        async function ask() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+            if (!bio) { logWindow.style.borderLeftColor = "#ef4444"; logWindow.innerText = "Bio hasn't loaded yet."; return; }
+
+            questionInput.value = "";
+            setComposerEnabled(false);
+            addMessage('user', question);
+            const pending = addMessage('bot pending', 'Thinking...');
+
+            const prompt = buildPrompt(question);
+
+            try {
+                let responseText;
+                if (engine === "webllm") {
+                    const result = await webllmEngine.chat.completions.create({ messages: [{ role: "user", content: prompt }] });
+                    responseText = result.choices[0].message.content;
+                } else {
+                    responseText = await chromeSession.prompt(prompt);
+                }
+                pending.classList.remove('pending');
+                pending.textContent = responseText;
+            } catch (e) {
+                pending.classList.remove('pending');
+                pending.textContent = (engine === "chromeai" && e.name === "QuotaExceededError")
+                    ? "This question plus the bio was too long for Gemini Nano's context window. Try WebLLM, or ask something shorter."
+                    : "Sorry, that failed: " + e;
+            } finally {
+                setComposerEnabled(true);
+                questionInput.focus();
+            }
+        }
+
+        askBtn.onclick = ask;
+        questionInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(); });
+
+        initWebLLM();
+    </script>
+</body>
+</html>
