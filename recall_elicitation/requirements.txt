@@ -1,0 +1,14 @@
+# Resume pipeline dependencies.
+#
+# python-docx is pure Python and has no build step, so this pipeline runs on
+# anything from CPython 3.9 to 3.14. Verified here on 3.14.7 / python-docx 1.2.0.
+# lxml is python-docx's own dependency, pinned here only so a fresh install is
+# reproducible.
+python-docx>=1.1,<2
+lxml>=5,<7
+
+# PDF output is OPTIONAL and is NOT a Python package: render_resume.py --pdf
+# shells out to LibreOffice (`soffice`). Install it separately if you want PDFs.
+#   Windows : winget install TheDocumentFoundation.LibreOffice
+#   macOS   : brew install --cask libreoffice
+#   Debian  : sudo apt-get install libreoffice-writer
