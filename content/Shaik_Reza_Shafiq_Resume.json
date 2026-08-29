@@ -1,0 +1,508 @@
+{
+  "name": "SHAIK REZA SHAFIQ",
+  "contact_text": "Singapore Citizen  |  \\+65 9178 1248  |  shaik.reza.shafiq@gmail.com  |  ",
+  "contact_links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/shaikrezashafiq/"
+    },
+    {
+      "label": "CSP",
+      "url": "https://www.myskillsfuture.gov.sg/csp/public/profile/nz4guushoc91db"
+    }
+  ],
+  "headline": "Project Manager | Human-Centred AI Adoption · Workflow Redesign · Measurable Organisational Change",
+  "subline": "MSc Quantitative Finance, SMU · \\~6 Years Building & Driving Measurable Change",
+  "blocks": [
+    {
+      "t": "section",
+      "text": "PROFESSIONAL SUMMARY"
+    },
+    {
+      "t": "para",
+      "text": "Transformation Manager with \\~6 years of driving measurable outcomes across statutory boards, government-linked institutions, and enterprise technology environments. Most recently led the National Heritage Board’s Digital Asset Management System (DAMS) adoption recovery to achieve **3x** growth in active usage across all 15 divisions through structured Organisational Change Management methodology – reversing a critical adoption plateau and establishing the measurement, governance, and enablement foundations for long-term digital operations."
+    },
+    {
+      "t": "para",
+      "text": "A transformation leader who has personally built the production systems now catalysing how organisations adopt – from AI/ML deployment and data pipelines to full stack applications. This engineering grounding means my change work is anchored in technical reality, not facilitation alone. I can diagnose why a system stalls, redesign the workflow around it and lead the people through the transition. Combines that build credibility with quantitative rigour (MSc Quantitative Finance; prior tenure at GIC and capital-markets & technology firms) with hands-on facilitation depth (10+ years in community education)."
+    },
+    {
+      "t": "callout",
+      "text": "Guiding Principle: Successful digital deployment is measured not by speed of implementation, but depth of human adoption"
+    },
+    {
+      "t": "context",
+      "text": "After a deliberate phase of building breadth across finance, consulting, and public-sector transformation, now seeking to consolidate that range into a long-term institutional role – where the priority is durable capability and retained knowledge, not just project delivery."
+    },
+    {
+      "t": "section",
+      "text": "CORE COMPETENCIES"
+    },
+    {
+      "t": "para",
+      "text": "**Change Management & OCM** — Stakeholder readiness assessments · change impact analysis · communications planning · training needs analysis (TNA) · adoption KPI design & tracking · adoption failure recovery · tier-based intervention planning"
+    },
+    {
+      "t": "para",
+      "text": "**Workflow & Process Architecture** — Lean & Operational Excellence frameworks · End-to-end workflow mapping and process redesign (BPMN, VSM, as-is/to-be, swimlane) · bottleneck diagnosis · operating model documentation · feasibility assessment"
+    },
+    {
+      "t": "para",
+      "text": "**Programme Delivery** — End-to-end initiative design · milestone governance · risk tracking · roadmap structuring · Jira project management"
+    },
+    {
+      "t": "para",
+      "text": "**Digital & AI Enablement** — Digital system rollouts · AI workflow mapping · process analysis for AI deployment · data governance · user adoption strategy"
+    },
+    {
+      "t": "para",
+      "text": "**Stakeholder Facilitation** — Cross-sector workshop facilitation · executive engagement · requirements gathering · consensus building · peer-driven change networks · structured escalation"
+    },
+    {
+      "t": "para",
+      "text": "**Communication & Knowledge Design** — SOP development · governance documentation · strategic briefs · knowledge-sharing frameworks · information taxonomy · user guides & enablement materials · structured learning design"
+    },
+    {
+      "t": "para",
+      "text": "**Capability Building** — Adult and youth learning facilitation · Socratic and experiential methods · structured onboarding · behavioural change design · peer-champion networks"
+    },
+    {
+      "t": "para",
+      "text": "**Technical Foundation** — Python · SQL · full-stack web development · data pipelines (ETL) · RAG/agentic AI systems · DevOps fundamentals · Linux · Tableau · API integration"
+    },
+    {
+      "t": "section",
+      "text": "PROFESSIONAL EXPERIENCE"
+    },
+    {
+      "t": "role",
+      "role": "Project Manager – Change & Transformation Lead, Digital Systems Adoption",
+      "org": "National Heritage Board",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "Jul 2025 – Jul 2026"
+    },
+    {
+      "t": "context",
+      "text": "Recruited on a fixed-term contract to reverse a stalled enterprise Digital Asset Management System (DAMS / Adobe Experience Manager) rollout – technically live, but plateaued in human adoption. Remit: drive utilisation to target, build adoption measurement architecture, and establish governance and knowledge foundations designed to outlast the contract."
+    },
+    {
+      "t": "para",
+      "text": "#### Adoption Recovery & Outcomes"
+    },
+    {
+      "t": "para",
+      "text": "* **Enterprise Adoption Delivery:** Led DAMS adoption recovery, reversing a critical adoption plateau through structured Organisational Change Management methodology – growing active usage from 30 officers across 8 divisions to 95 officers across all 15 divisions – **3x increase in active adoption** across the organisation."
+    },
+    {
+      "t": "para",
+      "text": "* **Diagnostic Discovery:** Ran a 3-month division-by-division diagnostic before designing interventions – mapping actual system users (vs org-chart names), per-division workflows and blockers (PDPA-sensitive assets, renovation disruptions, un-nominated admins), and reconstructing adoption baselines from Adobe Analytics Cloud, CloudWatch logs and CAMS user reports – reframing adoption as a portfolio of division-specific problems requiring targeted interventions rather than a single broadcast campaign."
+    },
+    {
+      "t": "para",
+      "text": "* **Stalled-Division Recovery:** Recovered divisions stalled at 0–25% progress to completion through targeted interventions: scheduled hands-on upload sessions, created dedicated Teams groups to sustain momentum through operational disruptions, built onboarding chains from scratch for divisions with no nominated admin, and identified alternative POCs for non-responsive stakeholders."
+    },
+    {
+      "t": "para",
+      "text": "#### Measurement & Analytics Architecture"
+    },
+    {
+      "t": "para",
+      "text": "* **Adoption Index Architecture:** Designed and implemented a two-instance DAMS Adoption Index (Author \\+ Publisher) with pillar-based methodology across Engagement, Contribution, Consumption and Retention; normalised every metric against baseline values, cross-validated aggregate scores against individual metric sheets to prevent silent aggregation errors, and established an Apr–Sep 2025 historical baseline enabling month-over-month divisional trend comparison. Conducted a data and AI adoption maturity assessment across 15 divisions, evaluating readiness against activity indicators and login thresholds."
+    },
+    {
+      "t": "para",
+      "text": "* **Analytics Pipeline Migration:** Migrated Adoption Index reporting from tedious, error-prone Excel tabulation to an analytics.gov pipeline (Python/Jupyter) consolidating AEM usage reports, CloudWatch metrics and CAMS user data into a modular, reproducible monthly reporting artefact – with in-file methodology documentation and anomaly commentary for successor continuity."
+    },
+    {
+      "t": "para",
+      "text": "* **Framework Adaptation:** Adapted the vendor’s normalisation template to NHB’s data realities – including documented methodological decisions to drop metrics unavailable from source systems – establishing a defensible, auditable measurement methodology."
+    },
+    {
+      "t": "para",
+      "text": "* **KPI Baselining & Annual Survey:** Directed 3 year KPI baselines and methodologies for ministry reporting, tracking success of the DAMS ecosystem for the long term. To that ends, executed the DAMS Annual Survey via FormSG (72.8% response rate achieved through structured chaser and incentive campaign), establishing ministry-reportable organisational baselines across time savings (61% of respondents reporting savings), training completion (lifted past the 50% target) and satisfaction (73.3% vs 80% target) – pairing every missed target with proposed mitigations before leadership asked."
+    },
+    {
+      "t": "para",
+      "text": "* **Hands-on Client facing dashboard delivery:** Gathered requirements from stakeholders and division officers for museum engagement Tableau dashboards and delivered the dashboard construction directly, increasing stakeholder engagement with the reporting."
+    },
+    {
+      "t": "para",
+      "text": "#### Change Management & Stakeholder Leadership"
+    },
+    {
+      "t": "para",
+      "text": "* **Strategic Change Management:** Served as internal working point for the vendor’s Change Management Accelerator engagement – developing guiding questions, running tier-analysis reviews with NHB Directors and the Adobe US change-management team, and coordinating the monthly check-in cadence; translated ADKAR framework principles into NHB-specific engagement plans, targeted intervention playbooks and data-driven KPI dashboards."
+    },
+    {
+      "t": "para",
+      "text": "* **Division-Tier Classification System:** Developed a four-tier classification framework (Active / Engaged / Casual User / Not Yet Onboarded) with explicit, data-driven criteria (activity indicators and login thresholds) covering all NHB divisions – shifting change strategy from top/bottom-performer binary framing to structured intervention planning aligned to each division’s use-case profile; framework adopted into the executive Change Management deck."
+    },
+    {
+      "t": "para",
+      "text": "* **Escalation Discipline:** Applied a structured escalation logic across 15 divisions on divergent timelines: direct outreach first, alternative POC identification for non-responsive stakeholders, and Director-level escalation only with management buy-in and documented justification."
+    },
+    {
+      "t": "para",
+      "text": "* **Stakeholder Management:** Influenced executive decision-making via weekly adoption and readiness assessments and process mapping to isolate division-level adoption barriers; translated user needs into technical features prioritised within Jira."
+    },
+    {
+      "t": "para",
+      "text": "* **Strategic Communications:** Maintained a twice-weekly written management cadence for 8+ months with structured task tracking, priority notation, milestone tables and named accountability – balancing public-sector operational realities with long-term digital objectives across vendors and internal business units."
+    },
+    {
+      "t": "para",
+      "text": "#### Enablement, Governance & Delivery"
+    },
+    {
+      "t": "para",
+      "text": "* **Facilitation & Training:** Led guidance and discovery workshops to surface pain points in system engagement; facilitated cross-division training using social proof and collaborative learning to re-engage resistant business users – shifting from broadcast communications to peer-champion-driven adoption."
+    },
+    {
+      "t": "para",
+      "text": "* **User Enablement Materials:** Authored a portfolio of user-facing enablement assets: SingPass User Guide for the CR11 authentication migration (onboarding, collaboration and off-boarding flows), CR11 launch EDM, DAMS Clinic proposal, HRD Tagging Guide, and division onboarding decks delivered in person."
+    },
+    {
+      "t": "para",
+      "text": "* **Requirements Gathering:** Collaborated with business users, technical owners and vendors to shape cost-efficient change requests for system upgrades, including feature-gap escalation informed by survey diagnostics."
+    },
+    {
+      "t": "para",
+      "text": "* **Data Governance & Compliance Enablement (IM8 / PDPA):** Drove top-down compliance with public-sector data protection standards (IM8, PDPA) across all divisions – translating dense governance doctrine into division-specific \"for-action\" guidance so business users understood exactly what compliance required of them. Verified and re-established the data accountability chain per division: confirming active Data Protection data stewards, and escalating to division management to re-delegate where roles had lapsed – ensuring governance obligations were met and not just circulated."
+    },
+    {
+      "t": "para",
+      "text": "* **IT Systems Governance:** Managed division user provisioning and account permissions; established operational guardrails and audited division-level administrators to ensure compliance."
+    },
+    {
+      "t": "para",
+      "text": "* **Process Innovation & AI Governance:** Built two production RAG chatbots using AIBots, and Pair within public-sector governance constraints (documented data provenance and update ownership): a Taxonomy AI Chatbot supporting information classification for the Heritage Discovery function, and an enterprise DAMS Chatbot mounted on curated technical specification documents to streamline internal team workflows, ensuring data provenance checks or access restrictions on the knowledge corpus."
+    },
+    {
+      "t": "para",
+      "text": "* **Handover & Continuity:** Self-initiated structured handover ahead of contract conclusion – consolidating SOPs, Jira ticket status, division-by-division adoption context and reporting artefacts into a documented SharePoint handover folder."
+    },
+    {
+      "t": "para",
+      "text": "* **Professional Development:** Completed a professional certification in Information Management and Taxonomy; applied Adobe’s Change Management Accelerator programme end-to-end."
+    },
+    {
+      "t": "para",
+      "text": "#### Vendor and Platform Partner Management"
+    },
+    {
+      "t": "para",
+      "text": "* **Working-level vendor ownership:** Served as the internal working-level point for the enterprise platform vendor. Set weekly agendas for the vendor success team, directed sessions toward identified platform utilisation gaps in analytics and asset management, and coordinated the monthly executive check-in cadence from January to July 2026\\."
+    },
+    {
+      "t": "para",
+      "text": "* **License utilisation:** Identified underused capability within the existing vendor entitlement in analytics and asset management, and structured the vendor engagement around activating that capability rather than expanding contracted scope."
+    },
+    {
+      "t": "para",
+      "text": "* **Demand definition:** Gathered business requirements from divisional users through structured interviews and user journey walkthroughs, then translated observed workflows into vendor-actionable specifications. Based change requests on demonstrated user behaviour rather than stated preference."
+    },
+    {
+      "t": "para",
+      "text": "* **Change request priorisation:** Contributed to the priority matrix governing the change request backlog, classifying requested features across must-do, should-do and could-do tiers. Used adoption and survey diagnostics to justify which feature gaps were escalated to the vendor and which were deferred."
+    },
+    {
+      "t": "para",
+      "text": "* **Vendor-delivered enablement:** Coordinated vendor-delivered training workshops and change management programmes, aligning vendor content to division-specific adoption barriers identified through internal diagnostics."
+    },
+    {
+      "t": "para",
+      "text": "* **Vendor issue escalation:** Maintained structured Jira governance across the vendor relationship, raising and tracking defect and capability tickets, coordinating resolution with vendor technical support, and managing dependency blockers against downstream deliverables."
+    },
+    {
+      "t": "para",
+      "text": "* **Commercial participation:** Participated in costing and budget review meetings with the vendor and internal stakeholders, covering costing timelines, budget allocation and licence utilisation. Commercial accountability sat with the internal project sponsor."
+    },
+    {
+      "t": "context",
+      "text": "Contract scoped for the DAMS adoption recovery programme, which reached its target outcome in July 2026\\. Now seeking to bring the same methodology to a longer-term, larger-scale transformation role."
+    },
+    {
+      "t": "role",
+      "role": "AI Process Consultant & Workflow Architect",
+      "org": "EkkBaz AI",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "Sep 2024 – Apr 2025"
+    },
+    {
+      "t": "para",
+      "text": "* **Project Management & Delivery:** Led a cross-functional engineering team to deliver process transformation engagements across government, financial and engineering sectors – designing AI integration roadmaps that reduced manual friction while preserving employee role scope."
+    },
+    {
+      "t": "para",
+      "text": "* **Agent Framework Engineering:** Architected the company’s first AI agent codebase – a LangGraph-based multi-tool agent framework supporting RAG, table-augmented generation (TAG), and image and voice ingestion — forming the foundation for all subsequent client POCs."
+    },
+    {
+      "t": "para",
+      "text": "* **Solution Engineering & Pitching:** Drove proof-of-concept delivery for Changi Airport Group’s procurement team; mapped end-to-end procurement workflows and engineered an AI copilot/agent framework to validate the system’s financial and operational value proposition."
+    },
+    {
+      "t": "para",
+      "text": "* **Internal Capability Building:** Spearheaded the parent organisation’s internal AI transformation by mentoring the AI engineering team and designing internal capability programmes — improving procurement processes from hours to minutes while building durable internal AI fluency."
+    },
+    {
+      "t": "para",
+      "text": "* **Process Architecture:** Enabled a Malaysian Government public-sector team to define technical requirements for an AI-powered monitoring system by mapping As-Is and To-Be escalation workflows and delivering structured process documentation for senior stakeholder alignment."
+    },
+    {
+      "t": "para",
+      "text": "* **Decision Workflow Mapping:** Enabled a US tax consultancy (My Freedom Phoenix Inc) to evaluate AI adoption – extracting and digitising expert consultant knowledge into a structured knowledge base, and mapping decision workflows into a POC AI agent that cut case-query times from days to hours while defining full deployment infrastructure requirements."
+    },
+    {
+      "t": "para",
+      "text": "#### Procurement Process Analysis"
+    },
+    {
+      "t": "para",
+      "text": "* **Procurement process assessment.** Documented and assessed an enterprise client's (ASL Marine Engineering) manual procurement operations across past market scan ITQ and ITT drafting, evaluation criteria and tender evaluation. Delivered a feasibility assessment identifying which steps were automatable by frequency and error risk."
+    },
+    {
+      "t": "context",
+      "text": "Engagement concluded as planned – fixed-scope consulting contract delivering 5 client engagements to workflow-design and POC/MVP stage."
+    },
+    {
+      "t": "role",
+      "role": "Quantitative Developer, Data Scientist – Cross-Functional Transformation Delivery",
+      "org": "Call Levels Pte Ltd",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "Sep 2022 – Jul 2024"
+    },
+    {
+      "t": "context",
+      "text": "Joined under a Quant Developer mandate – executing the full SDLC to build and integrate quantitative components into the firm's trading system – with scope that evolved over the engagement into AI-enablement and process-transformation delivery across public, government-linked and consumer clients. Progressed from independent contributor to leading architecture and engineering design across projects."
+    },
+    {
+      "t": "para",
+      "text": "#### Trading Systems & Quantitative Development Project management"
+    },
+    {
+      "t": "para",
+      "text": "* **Full SDLC Delivery:** Executed the end-to-end software development life cycle for the firm's quantitative trading stack – requirements, design, implementation, testing and deployment – writing well-designed, testable Python."
+    },
+    {
+      "t": "para",
+      "text": "* **Systems Integration:** Integrated signal, order-state and PnL software components into a functioning trading system, deploying an FX momentum strategy to a live-broker mock environment backed by a PostgreSQL order-state, signal and PnL architecture."
+    },
+    {
+      "t": "para",
+      "text": "* **Technical Architecture & Solution Engineering:** Translated institutional hedging requirements for the Bank of Thailand into a structured technical specification and working MVP, coordinating across compliance, treasury and technical stakeholders."
+    },
+    {
+      "t": "para",
+      "text": "* **Quantitative Research, ML and Automation:** Built a full backtesting suite integrating internal databases and external market data APIs; applied statistical significance testing (ACF/PACF, cross-correlation) to validate signal hypotheses, then optimised an FX momentum strategy using CatBoost with walk-forward optimisation – deployed to a live-broker mock environment with a PostgreSQL-backed order-state, signal and PnL architecture automating manual trading processes with machine-level visibility via clear logs and Slack-integrated messages."
+    },
+    {
+      "t": "para",
+      "text": "#### Requirements Engineering, Contracting & Solution Architecture"
+    },
+    {
+      "t": "para",
+      "text": "* **Supplier-side contracting:** Drafted service level agreements with priced statements of work for client pitches, including for a Malaysian government-linked client. Tracked KPI scorecards weekly against contracted obligations through delivery."
+    },
+    {
+      "t": "para",
+      "text": "* **Requirements & Solution Documentation**: Developed workflow maps, flowcharts and requirements documentation to identify solutions – translating business and institutional needs into buildable specifications across both trading and client-facing engagements."
+    },
+    {
+      "t": "para",
+      "text": "* **Cross-Functional Transformation:** Led process-transformation and AI-enablement initiatives spanning requirements engineering, workflow mapping and solution scoping across public, government-linked and consumer sectors."
+    },
+    {
+      "t": "para",
+      "text": "#### AI Product & Transformation Delivery"
+    },
+    {
+      "t": "para",
+      "text": "* **AI Product Prototyping:** Designed and pitched RAG-based products during the 2022–23 genAI wave – including a nutrition-optimising food recommendation chatbot (pitched to NTUC Fairprice) built over a structured nutritional database with dietary-type optimisation (max-protein, min-calorie, halal)."
+    },
+    {
+      "t": "para",
+      "text": "* **Forward-Deployed Delivery:** Embedded within a government-linked travel client as forward-deployed engineer: conducted a full data audit, delivered a data-readiness report, designed the digitisation pipeline (physical archives → scanning → OCR → structured sheets), and delivered a RAG MVP – reducing manual itinerary workflow turnaround from \\~4 days to \\~2 hours – a **48x** gain."
+    },
+    {
+      "t": "para",
+      "text": "* **Expectation Management:** Managed stakeholder misalignments by proactively reconciling inflated AI expectations with technical realities, defining clear operational scopes for executive alignment."
+    },
+    {
+      "t": "para",
+      "text": "* **Solution Scoping:** Conducted workflow mapping and AI solution scoping for NTUC FairPrice inventory management processes; designed an AI recommendation system delivered successfully to POC stage."
+    },
+    {
+      "t": "context",
+      "text": "Reason for leaving: project completion and company restructuring."
+    },
+    {
+      "t": "role",
+      "role": "Quantitative Developer",
+      "org": "Alpha Stone Capital Pte Ltd",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "Sep 2021 – Aug 2022"
+    },
+    {
+      "t": "para",
+      "text": "* **Team & Delivery Leadership:** Took up the tech-lead role within a 5-person quant/trading team – directing engineering work and managing weekly Agile sprints reporting to the Portfolio Manager to transform trading processes using quantitative engineering best practices."
+    },
+    {
+      "t": "para",
+      "text": "* **Trading Systems Engineering:** Led development of a crypto arbitrage system processing real-time Level-2 order-book data via WebSockets and asynchronous programming (asyncio), with exchange API integration and automated order execution – investigation ultimately surfaced a platform-side calculation error, informing an executive decision not to deploy."
+    },
+    {
+      "t": "para",
+      "text": "* **Backtesting & Strategy Platform:** Built a backtesting suite from scratch in Python – historical data ingestion (CCXT), simulation engine, performance metrics, and walk-forward optimisation – and leveraged ML-based signal generation (XGBoost) to evaluate feature predictive power."
+    },
+    {
+      "t": "para",
+      "text": "* **Production Deployment & Monitoring:** Deployed an asynchronous production trading algorithm with class-based order-state management, publishing signals and order data to TimescaleDB with a Grafana dashboard for real-time PnL monitoring; deployed to VPS via Git/SSH – achieving a **10%** return on a production account over 3 months."
+    },
+    {
+      "t": "para",
+      "text": "* **Strategic Planning & Framework Design:** Partnered with executive leadership to translate high-level strategic objectives into structured implementation plans, achieving **2x** faster development cycles; developed monitoring and evaluation frameworks guiding portfolio allocation decisions."
+    },
+    {
+      "t": "context",
+      "text": "Reason for leaving: company liquidated following restructuring."
+    },
+    {
+      "t": "role",
+      "role": "Quantitative Researcher",
+      "org": "GIC (Government of Singapore Investment Corporation)",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "Oct 2020 – Jul 2021"
+    },
+    {
+      "t": "para",
+      "text": "* **Research-to-Production Translation:** Translated academic research (e.g. GDP forecast-dispersion effects on market shocks) into systematic smart-beta portfolio strategies within the Systematic Investment Group – ramping up on the in-house R tech stack and libraries within one week, and iteratively validating models against historical market data."
+    },
+    {
+      "t": "para",
+      "text": "* **Process Optimisation & Speed:** Redesigned the factor-data processing pipeline via As-Is mapping and parallel processing (R futures library) – cutting data processing turnaround from 4 hours to 45 minutes – a **5x gain**."
+    },
+    {
+      "t": "para",
+      "text": "* **ETL & Automation Engineering:** Built Apache Airflow \\+ Spark ETL pipelines to schedule and optimise ingestion of new data sources – including RPA (Selenium, PyAutoGUI) extraction of balance-sheet data unavailable via API, transformed into calculated financial ratios and loaded into PostgreSQL – replacing manual processes with automated workflows."
+    },
+    {
+      "t": "para",
+      "text": "* **Cross-Team Standardisation:** Identified inconsistent backtesting practices across research teams and co-developed a standardised end-to-end model-testing template (Jupyter) covering data ingestion, transformation, model testing and analytics plotting – with full Markdown documentation of in-house libraries – improving data consistency and evaluation comparability across trading and research teams."
+    },
+    {
+      "t": "para",
+      "text": "* **Executive Synthesis:** Synthesised complex quantitative modelling outputs into concise, narrative-driven analytics dashboards and decision-ready recommendations for senior leadership."
+    },
+    {
+      "t": "context",
+      "text": "Reason for leaving: contract completion."
+    },
+    {
+      "t": "section",
+      "text": "COMMUNITY ENGAGEMENT & FACILITATION"
+    },
+    {
+      "t": "role",
+      "role": "Educator & Facilitator",
+      "org": "Mendaki \\+ Independent Contracts",
+      "dates": ""
+    },
+    {
+      "t": "context",
+      "text": "2013 – Present (10+ years)"
+    },
+    {
+      "t": "para",
+      "text": "* **Inclusive Program Delivery:** Designed and delivered structured learning programs for 100+ students from challenging socioeconomic backgrounds, dynamically adapting curriculum pacing and communication styles to diverse learning needs."
+    },
+    {
+      "t": "para",
+      "text": "* **Behavioural Change Facilitation:** Applied Socratic questioning and role-reversal facilitation to cultivate critical thinking and confidence – methodology directly transferable to adult change management, resistance mitigation and behavioural design."
+    },
+    {
+      "t": "para",
+      "text": "* **Stakeholder Relationship Management:** Appointed independently by families and community organisations for mentoring engagements, establishing trusted relationships across highly diverse demographic and cultural backgrounds."
+    },
+    {
+      "t": "role",
+      "role": "Community Project – Open-Source Companion Application",
+      "org": "Independent",
+      "dates": ""
+    },
+    {
+      "t": "para",
+      "text": "* **User-Centric Product Building:** Built and continuously iterating on an open-source dua and dhikr companion application for the Muslim community featuring dynamic markdown-to-HTML rendering, word-by-word tracing, and provenance tracking to optimise digital accessibility and content"
+    },
+    {
+      "t": "para",
+      "text": "* **Adoption-Driven Implementation:** Used the project as a live test of the “adoption-over-features” thesis: technical development took hours, but driving active daily adoption required weeks of hands-on facilitation."
+    },
+    {
+      "t": "para",
+      "text": "* **Domain & Heritage Research:** Conducted independent qualitative research on the origins and transmission of Nusantara Islamic practices, actively contributing to taxonomy of heritage documentation and preservation discourse"
+    },
+    {
+      "t": "section",
+      "text": "EDUCATION"
+    },
+    {
+      "t": "para",
+      "text": "**Master of Science, Quantitative Finance** – Singapore Management University *2020*"
+    },
+    {
+      "t": "context",
+      "text": "Data modeling, statistical analysis, and applied computation"
+    },
+    {
+      "t": "para",
+      "text": "**Bachelor of Science, Mathematics and Economics** – Nanyang Technological University *2018*"
+    },
+    {
+      "t": "context",
+      "text": "Certificate of Concentration in Computational Mathematics"
+    },
+    {
+      "t": "section",
+      "text": "LANGUAGES"
+    },
+    {
+      "t": "para",
+      "text": "**English & Malay** – Fluent • **Arabic** – Conversational & Written • **Hindi/Urdu** – Conversational • **Chinese** – Conversational"
+    },
+    {
+      "t": "section",
+      "text": "CERTIFICATIONS & PROFESSIONAL DEVELOPMENT"
+    },
+    {
+      "t": "para",
+      "text": "* Pursuing: Prosci ADKAR"
+    },
+    {
+      "t": "para",
+      "text": "* Information Management: Taxonomies and Controlled Vocabularies (2026)"
+    },
+    {
+      "t": "para",
+      "text": "* Adobe Change Management Accelerator Programme (2026)"
+    },
+    {
+      "t": "para",
+      "text": "* Advanced Data Analytics – Tableau (2025)"
+    }
+  ]
+}

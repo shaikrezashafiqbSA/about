@@ -1,0 +1,8 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Resume pipeline output - regenerate with run_resume_gui.bat or build_resume.py
+build/
+*.spec.json
