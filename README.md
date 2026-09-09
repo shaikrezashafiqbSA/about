@@ -6,14 +6,22 @@ packaged entirely in your browser.
 
 ## Use it
 
-1. In Google Docs choose **File → Download → Markdown (.md)**.
-2. Open the page and drop that file on the panel.
-3. Type the organisation name. It is substituted into the first section heading.
-4. Rename any section heading you want. Changes are remembered in this browser.
-5. Press **Download .docx** and drag the result back into Drive.
+The middle column is a Markdown editor. Type in it and the A4 preview on the
+right rebuilds as you go, from the same model that packages the `.docx`.
+
+1. Write, or paste a resume, into the editor. **Open file** and dropping a `.md`
+   onto the editor both load a file into it. From Google Docs, use
+   **File → Download → Markdown (.md)**.
+2. Type the organisation name. It is substituted into the first section heading.
+3. Rename any section heading you want.
+4. Press **Download .docx** and drag the result back into Drive.
+
+Your draft, heading names, organisation and theme are kept in this browser's
+local storage, so a reload picks up where you left off. **Sample** replaces the
+editor with the bundled resume.
 
 Opening `index.html` straight off disk works, but the browser will block loading
-the bundled sample. Drop your own file, or serve the folder over HTTP.
+the bundled sample. Type or paste instead, or serve the folder over HTTP.
 
 ## Section headings
 
@@ -81,10 +89,10 @@ the lowest-relevance bullets in the oldest roles first.
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | Markup, styling, theme tokens |
+| `index.html` | Three-column layout, styling, theme tokens |
 | `js/parse.js` | Markdown → ordered sections and blocks |
 | `js/render.js` | Blocks → `.docx`, page geometry and type scale |
-| `js/app.js` | Panel, preview, page ruler, download |
+| `js/app.js` | Editor, panel, live preview, page ruler, download |
 | `content/` | Sample and working resumes |
 
 The only external dependency is the `docx` library, pinned to 9.7.1 and loaded
