@@ -1,6 +1,0 @@
-{
-  "_comment": "Registry of skills offered by the AI matcher. Static hosting has no directory listing, so the page cannot discover .md files on its own - every skill must be listed here. Order controls the order shown in the picker. Display name and description are read from each file's YAML frontmatter, so they are never duplicated here.",
-  "skills": [
-    "job-apply.md"
-  ]
-}
