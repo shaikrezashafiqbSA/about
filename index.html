@@ -1,136 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shaik Reza Shafiq | Portfolio</title>
-    <meta name="description" content="Portfolio of Shaik Reza Shafiq — resume, local-AI tools, and an oasis masjid where a scholar examines what you claim to know.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Render</title>
+<style>
+  /* Theme tokens mirror js/render.js so the preview and the .docx agree. */
+  :root {
+    --accent: #1F3A5F; --ink: #1A1A1A; --muted: #5A5A5A; --rule: #B8C4D4;
+    --head-font: Georgia, "Times New Roman", serif;
+    --body-font: Calibri, Carlito, "Segoe UI", system-ui, sans-serif;
+    --ui-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+    --shell: #f4f5f7; --panel: #ffffff; --line: #dfe3e8;
+  }
+  body[data-theme="charcoal"] { --accent: #2B2B2B; --muted: #606060; --rule: #C6C6C6; }
+  body[data-theme="teal"] { --accent: #14524B; --muted: #5A5A5A; --rule: #B5CCC8;
+                            --head-font: var(--body-font); }
+  body[data-theme="plain"] { --accent: #000000; --ink: #000000; --muted: #444444;
+                             --rule: #999999; --head-font: var(--body-font); }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="web/atelier/atelier.css">
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--shell); color: #222;
+         font-family: var(--ui-font); font-size: 14px; }
+
+  .layout { display: flex; align-items: flex-start; gap: 24px;
+            padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* ---------------------------------------------------------- controls */
+  .panel { flex: 0 0 340px; position: sticky; top: 24px; background: var(--panel);
+           border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+  .panel h1 { font-size: 16px; margin: 0 0 2px; letter-spacing: .01em; }
+  .panel .sub { color: #667; font-size: 12px; margin: 0 0 16px; }
+  .panel h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+              color: #667; margin: 20px 0 8px; font-weight: 600; }
+  .panel label { display: block; }
+  input[type="text"], select {
+    width: 100%; padding: 7px 9px; font: inherit; font-size: 13px;
+    border: 1px solid var(--line); border-radius: 5px; background: #fff; color: #222; }
+  input[type="text"]:focus, select:focus { outline: 2px solid var(--accent);
+                                           outline-offset: -1px; }
+
+  #drop { border: 1.5px dashed var(--line); border-radius: 6px; padding: 14px;
+          text-align: center; color: #667; font-size: 12.5px; cursor: pointer;
+          background: #fbfcfd; }
+  #drop.over { border-color: var(--accent); background: #eef3f9; color: var(--accent); }
+  #drop input { display: none; }
+  #source { display: block; margin-top: 6px; font-size: 11px; color: #8a93a0;
+            word-break: break-all; }
+
+  .heading-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .heading-tag { flex: 0 0 74px; font-size: 9.5px; letter-spacing: .06em;
+                 text-transform: uppercase; color: var(--accent); font-weight: 600;
+                 background: #eef2f7; border-radius: 3px; padding: 4px 5px;
+                 text-align: center; }
+  .heading-tag.custom { color: #8a6d3b; background: #fdf6e6; }
+  .heading-row input { font-size: 12px; }
+  .hint { font-size: 12px; color: #778; margin: 0; }
+
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 16px; }
+  button { font: inherit; font-size: 13px; border-radius: 5px; cursor: pointer;
+           border: 1px solid var(--line); background: #fff; padding: 8px 12px; }
+  button:hover { border-color: #b9c0c9; }
+  #download { flex: 1; background: var(--accent); color: #fff; border-color: transparent;
+              font-weight: 600; }
+  #download:disabled { background: #9aa3ad; cursor: not-allowed; }
+
+  .pages { margin-top: 14px; font-size: 12px; color: #667; }
+  .pages.over { color: #b02a37; font-weight: 600; }
+  .status { margin-top: 10px; font-size: 12px; line-height: 1.45; padding: 0;
+            border-radius: 5px; }
+  .status.ok   { padding: 8px 10px; background: #eef9f1; color: #1c6b39; }
+  .status.err  { padding: 8px 10px; background: #fdf0f1; color: #97202a; }
+  .status.warn { padding: 8px 10px; background: #fdf7e8; color: #7d5a12; }
+
+  /* ----------------------------------------------------------- preview */
+  .stage { flex: 1 1 auto; min-width: 0; position: relative;
+           display: flex; justify-content: center; }
+  #rules { position: absolute; inset: 0; pointer-events: none; }
+  .page-rule { position: absolute; left: 0; right: 0; border-top: 1px dashed #c3c9d2; }
+  .page-rule::after { content: attr(data-label); position: absolute; right: 4px;
+                      top: 3px; font-size: 10px; color: #a9b0ba; }
+
+  /* A4 at the same margins the .docx uses, so the ruler means something. */
+  #sheet { width: 210mm; min-height: 297mm; padding: 0.55in 0.7in;
+           background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12);
+           font-family: var(--body-font); font-size: 10pt; color: var(--ink);
+           line-height: 1.32; }
+
+  #sheet p { margin: 0; }
+  .r-name { text-align: center; font-family: var(--head-font); font-size: 20pt;
+            font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+            color: var(--accent); margin-bottom: 2pt; }
+  .r-contact { text-align: center; font-size: 9pt; color: var(--muted);
+               margin-bottom: 3pt; }
+  .r-headline { text-align: center; font-family: var(--head-font); font-size: 10pt;
+                font-weight: 700; margin-bottom: 1pt; }
+  .r-subline { text-align: center; font-size: 9.5pt; font-style: italic;
+               color: var(--muted); margin-bottom: 10pt; }
+
+  .r-section { font-family: var(--head-font); font-size: 10.5pt; font-weight: 700;
+               text-transform: uppercase; letter-spacing: .05em; color: var(--accent);
+               border-bottom: 1px solid var(--rule); padding-bottom: 3pt;
+               margin: 13pt 0 4.5pt; }
+  .r-role { font-weight: 700; font-size: 10.5pt; margin-top: 10pt; }
+  .r-org { display: flex; justify-content: space-between; gap: 12pt;
+           font-size: 9.5pt; color: var(--muted); margin-bottom: 3.5pt; }
+  .r-dates { font-style: italic; white-space: nowrap; }
+  .r-edu { display: flex; justify-content: space-between; gap: 12pt;
+           margin-top: 6pt; margin-bottom: 3pt; }
+  .r-note { font-size: 9.5pt; color: var(--muted); margin-bottom: 3pt; }
+  .r-subhead { font-weight: 700; font-style: italic; font-size: 9.5pt;
+               color: var(--accent); margin: 7.5pt 0 2.5pt; }
+  .r-callout { font-size: 9.5pt; font-style: italic; color: var(--accent);
+               border-left: 2px solid var(--rule); padding-left: 8pt;
+               margin: 4pt 0 5.5pt 11pt; }
+  .r-context { font-size: 9.5pt; font-style: italic; color: var(--muted);
+               margin-bottom: 3.5pt; }
+  .r-skill { margin-bottom: 3.5pt; }
+  .r-para { margin-bottom: 5pt; }
+  .r-bullet { position: relative; padding-left: 16pt; margin-bottom: 3pt; }
+  .r-bullet::before { content: "\2022"; position: absolute; left: 5pt;
+                      color: var(--muted); }
+  #sheet strong { color: inherit; }
+  .r-skill strong, .r-bullet strong { color: var(--accent); }
+  #sheet a { color: var(--accent); }
+
+  @media (max-width: 1080px) {
+    .layout { flex-direction: column; }
+    .panel { position: static; flex: 1 1 auto; width: 100%; }
+    #sheet { width: 100%; min-width: 0; }
+  }
+</style>
 </head>
-<body>
-    <!-- The courtyard. Everything else floats over it. -->
-    <canvas id="stage"></canvas>
+<body data-theme="navy">
 
-    <div id="stage-fallback">
-        <p>
-            This page draws an oasis masjid with WebGL, which your browser has turned off or
-            does not support. The rest of the site works normally — use the menu.
-        </p>
+<div class="layout">
+  <div class="panel">
+    <h1>Resume Render</h1>
+    <p class="sub">Markdown in, formatted .docx out. Nothing leaves your browser.</p>
+
+    <h2>Source</h2>
+    <label id="drop">
+      Drop a <strong>.md</strong> file here, or click to choose one
+      <input type="file" id="file" accept=".md,.markdown,.txt,text/markdown,text/plain">
+    </label>
+    <span id="source"></span>
+
+    <h2>Organisation</h2>
+    <input type="text" id="org" placeholder="e.g. Ministry of Digital Development"
+           autocomplete="off">
+
+    <h2>Section headings</h2>
+    <div id="headings"></div>
+
+    <h2>Theme</h2>
+    <select id="theme">
+      <option value="navy">Navy, serif headings</option>
+      <option value="charcoal">Charcoal, serif headings</option>
+      <option value="teal">Teal, sans throughout</option>
+      <option value="plain">Plain black, prints in greyscale</option>
+    </select>
+
+    <div class="row">
+      <button id="download" disabled>Download .docx</button>
+      <button id="reset" title="Restore the default heading names">Reset</button>
     </div>
 
-    <!-- Floats above the scholar's head; positioned each frame by scene.js. -->
-    <button id="npc-marker" type="button" aria-label="Speak with Al-Kātib"></button>
+    <p class="pages" id="pages"></p>
+    <p class="status" id="status"></p>
+  </div>
 
-    <button id="menu-toggle" type="button" aria-label="Toggle menu">☰</button>
+  <div class="stage">
+    <div id="rules"></div>
+    <div id="sheet"></div>
+  </div>
+</div>
 
-    <nav id="menu">
-        <div class="crest">
-            <div>
-                <h1>Shaik Reza Shafiq</h1>
-                <span class="tag">Change management · quant · local AI</span>
-            </div>
-            <span class="seal arabic">ﷺ</span>
-        </div>
-
-        <p class="menu-label">The Majlis</p>
-
-        <button class="menu-item primary" id="speak-npc" type="button">
-            <span class="glyph">🕌</span>
-            <span>Speak with Al-Kātib</span>
-            <span class="badge" id="quest-badge"></span>
-        </button>
-
-        <button class="menu-item" id="open-atlas" type="button">
-            <span class="glyph">🌳</span>
-            <span>Skill Atlas</span>
-        </button>
-
-        <p class="menu-label">Portfolio</p>
-
-        <a class="menu-item" href="web/render.html">
-            <span class="glyph">📄</span>
-            <span>View my styled CV</span>
-        </a>
-
-        <a class="menu-item" href="web/matcher.html">
-            <span class="glyph">🤖</span>
-            <span>Local AI job matcher</span>
-        </a>
-
-        <a class="menu-item" href="web/ask.html">
-            <span class="glyph">💬</span>
-            <span>Ask me anything</span>
-        </a>
-
-        <a class="menu-item" href="https://shaikrezashafiqbsa.github.io/steps-of-muhammad/"
-           target="_blank" rel="noopener noreferrer">
-            <span class="glyph">👣</span>
-            <span>Steps of Muhammad</span>
-            <span class="ext">↗</span>
-        </a>
-
-        <div class="menu-foot">
-            The courtyard, the masjid and the scholar are drawn from primitives at runtime —
-            no 3D assets, no server, no API keys. Everything you tell him stays in this browser.
-        </div>
-    </nav>
-
-    <div id="ticker"></div>
-
-    <div id="veil" class="veil"></div>
-
-    <!-- The dialogue. Contents are built by app.js per exchange. -->
-    <section id="majlis" aria-live="polite">
-        <header class="majlis-head">
-            <span class="portrait">🧔🏽‍♂️</span>
-            <div>
-                <div class="name">Al-Kātib</div>
-                <div class="role">Keeper of your scrolls</div>
-            </div>
-            <span class="arabic">الكاتب</span>
-            <button class="closer" id="majlis-close" type="button" aria-label="Close">✕</button>
-        </header>
-        <div class="majlis-body" id="majlis-body"></div>
-    </section>
-
-    <!-- The skill tree. -->
-    <div id="atlas">
-        <div class="atlas-shell">
-            <div class="atlas-head">
-                <h2>Skill Atlas</h2>
-                <span class="arabic">شجرة العلم</span>
-                <span class="spacer"></span>
-                <button class="btn" id="close-atlas" type="button">Close</button>
-            </div>
-            <p class="atlas-sub">
-                Every node here is something Al-Kātib can examine you on. A node stays locked until
-                what it rests on is verified, and it is only verified when you have said it back to
-                him from memory. Pick any open node to be tested on it now.
-            </p>
-            <div class="legend">
-                <span><i style="background:#6a7b80"></i> locked</span>
-                <span><i style="background:#e0b552"></i> ready</span>
-                <span><i style="background:#d98a4a"></i> unresolved</span>
-                <span><i style="background:#4a9c78"></i> verified</span>
-                <span><i style="background:linear-gradient(120deg,#e0b552,#4a9c78)"></i> mastered</span>
-            </div>
-            <div id="atlas-body"></div>
-        </div>
-    </div>
-
-    <script type="module" src="web/atelier/app.js"></script>
-    <noscript>
-        <div style="position:fixed;inset:0;display:grid;place-items:center;background:#f4f6f9;color:#1e293b;padding:40px;text-align:center;font-family:sans-serif;z-index:99">
-            <div>
-                <h1>Shaik Reza Shafiq</h1>
-                <p>This page needs JavaScript. The CV is readable directly:</p>
-                <p><a href="content/Shaik_Reza_Shafiq_Resume.md">Shaik_Reza_Shafiq_Resume.md</a></p>
-            </div>
-        </div>
-    </noscript>
+<script src="https://cdn.jsdelivr.net/npm/docx@9.7.1/dist/index.iife.js"></script>
+<script src="js/parse.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
