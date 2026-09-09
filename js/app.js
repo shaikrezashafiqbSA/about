@@ -1,4 +1,4 @@
-/* app.js - the page: load markdown, edit headings, preview, download .docx.
+/* app.js - the page: type Markdown, watch the document build, download it.
  *
  * The preview is drawn from the same block model as the .docx rather than from
  * a generic markdown renderer. That is the only way the page ruler can mean
@@ -8,12 +8,15 @@
 (function () {
   'use strict';
 
-  var DEFAULT_SOURCE = 'content/Shaik_Reza_Shafiq_Resume.md';
+  var SAMPLE = 'content/Shaik_Reza_Shafiq_Resume.md';
   var STORE = 'resume-render.v1';
+  var DEBOUNCE_MS = 180;
 
   var el = {
+    editor:   document.getElementById('editor'),
     file:     document.getElementById('file'),
-    drop:     document.getElementById('drop'),
+    open:     document.getElementById('open'),
+    sample:   document.getElementById('sample'),
     org:      document.getElementById('org'),
     theme:    document.getElementById('theme'),
     headings: document.getElementById('headings'),
@@ -21,14 +24,19 @@
     download: document.getElementById('download'),
     status:   document.getElementById('status'),
     pages:    document.getElementById('pages'),
+    source:   document.getElementById('source'),
+    stage:    document.querySelector('.stage'),
+    scaler:   document.getElementById('scaler'),
+    wrap:     document.getElementById('wrap'),
     sheet:    document.getElementById('sheet'),
-    rules:    document.getElementById('rules'),
-    source:   document.getElementById('source')
+    rules:    document.getElementById('rules')
   };
 
   var model = null;         // { header, sections }
   var overrides = {};       // section id -> heading text typed by the user
-  var prefs = { org: '', theme: 'navy' };
+  var prefs = { org: '', theme: 'navy', md: '' };
+  var panelIds = '';        // section ids the heading panel was built for
+  var timer = null;
 
   /* ---------------------------------------------------------------- state */
 
@@ -36,19 +44,18 @@
 
   function loadPrefs() {
     try {
-      var raw = localStorage.getItem(STORE);
-      if (!raw) return;
-      var saved = JSON.parse(raw);
+      var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
       overrides = saved.overrides || {};
       prefs.org = saved.org || '';
       prefs.theme = saved.theme || 'navy';
+      prefs.md = typeof saved.md === 'string' ? saved.md : '';
     } catch (e) { /* private window, cleared storage: defaults are fine */ }
   }
 
   function savePrefs() {
     try {
       localStorage.setItem(STORE, JSON.stringify({
-        overrides: overrides, org: prefs.org, theme: prefs.theme
+        overrides: overrides, org: prefs.org, theme: prefs.theme, md: prefs.md
       }));
     } catch (e) { /* nothing here is worth failing a render over */ }
   }
@@ -73,8 +80,22 @@
     });
   }
 
-  function buildHeadingPanel() {
+  /* The panel is rebuilt only when the set of sections actually changes.
+   * Rebuilding on every keystroke would throw away the caret of anyone
+   * editing a heading while the editor still holds focus elsewhere. */
+  function syncHeadingPanel() {
+    var ids = model.sections.map(sectionId).join('');
+    if (ids === panelIds) return;
+    panelIds = ids;
     el.headings.innerHTML = '';
+
+    if (!model.sections.length) {
+      el.headings.innerHTML =
+        '<p class="hint">No sections yet. A line in ALL CAPS bold, or one ' +
+        'starting with ##, becomes a section heading.</p>';
+      return;
+    }
+
     model.sections.forEach(function (s) {
       var id = sectionId(s);
       var row = document.createElement('label');
@@ -101,11 +122,6 @@
       row.appendChild(input);
       el.headings.appendChild(row);
     });
-
-    if (!model.sections.length) {
-      el.headings.innerHTML =
-        '<p class="hint">No sections found. Check that the file uses headings.</p>';
-    }
   }
 
   /* -------------------------------------------------------------- preview */
@@ -190,6 +206,20 @@
     el.sheet.innerHTML = out;
     document.body.setAttribute('data-theme', prefs.theme);
     measurePages();
+    fitPreview();
+  }
+
+  /* The sheet is a fixed 210mm wide. Rather than force a horizontal scrollbar
+   * on a laptop, scale it down to whatever width the column has. Transforms do
+   * not change layout metrics, so the page measurement below stays honest. */
+  function fitPreview() {
+    var avail = el.stage.clientWidth;
+    var natural = el.wrap.offsetWidth;
+    if (!avail || !natural) return;
+    var scale = Math.min(1, avail / natural);
+    el.wrap.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
+    el.scaler.style.width = Math.round(natural * scale) + 'px';
+    el.scaler.style.height = Math.round(el.wrap.offsetHeight * scale) + 'px';
   }
 
   /* Page count is an estimate. The preview uses the same page size, margins and
@@ -235,16 +265,30 @@
     renderPreview();
   }
 
-  function loadMarkdown(md, label) {
-    model = window.ResumeParse.parse(md);
-    el.source.textContent = label;
-    buildHeadingPanel();
+  function reparse() {
+    model = window.ResumeParse.parse(el.editor.value);
+    syncHeadingPanel();
     refresh();
-    el.download.disabled = !window.docx;
-    if (!window.docx) {
-      setStatus('The docx library did not load, so download is unavailable. ' +
-                'Check your network or ad blocker.', 'err');
-    }
+    el.download.disabled = !window.docx || !el.editor.value.trim();
+  }
+
+  function scheduleReparse() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () {
+      timer = null;
+      prefs.md = el.editor.value;
+      savePrefs();
+      reparse();
+    }, DEBOUNCE_MS);
+  }
+
+  function setMarkdown(md, label) {
+    el.editor.value = md;
+    prefs.md = md;
+    savePrefs();
+    el.source.textContent = label || '';
+    panelIds = '';                       // a new document: rebuild the panel
+    reparse();
   }
 
   function slug(s) {
@@ -292,31 +336,53 @@
 
   /* ----------------------------------------------------------------- wire */
 
+  el.editor.addEventListener('input', scheduleReparse);
+
+  /* Tab indents instead of leaving the editor, which matters when the whole
+   * document is written here rather than pasted in. */
+  el.editor.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || e.ctrlKey || e.altKey || e.metaKey) return;
+    e.preventDefault();
+    var start = el.editor.selectionStart, end = el.editor.selectionEnd;
+    var v = el.editor.value;
+    el.editor.value = v.slice(0, start) + '  ' + v.slice(end);
+    el.editor.selectionStart = el.editor.selectionEnd = start + 2;
+    scheduleReparse();
+  });
+
   function readFile(file) {
     if (!file) return;
     var reader = new FileReader();
-    reader.onload = function () { loadMarkdown(String(reader.result), file.name); };
+    reader.onload = function () { setMarkdown(String(reader.result), file.name); };
     reader.onerror = function () { setStatus('Could not read that file.', 'err'); };
     reader.readAsText(file);
   }
 
-  el.file.addEventListener('change', function () { readFile(el.file.files[0]); });
+  el.open.addEventListener('click', function () { el.file.click(); });
+  el.file.addEventListener('change', function () {
+    readFile(el.file.files[0]);
+    el.file.value = '';               // so re-opening the same file still fires
+  });
 
   ['dragenter', 'dragover'].forEach(function (ev) {
-    el.drop.addEventListener(ev, function (e) {
+    el.editor.addEventListener(ev, function (e) {
       e.preventDefault();
-      el.drop.classList.add('over');
+      el.editor.classList.add('over');
     });
   });
   ['dragleave', 'drop'].forEach(function (ev) {
-    el.drop.addEventListener(ev, function (e) {
+    el.editor.addEventListener(ev, function (e) {
       e.preventDefault();
-      el.drop.classList.remove('over');
+      el.editor.classList.remove('over');
     });
   });
-  el.drop.addEventListener('drop', function (e) {
-    readFile(e.dataTransfer.files[0]);
+  el.editor.addEventListener('drop', function (e) {
+    if (e.dataTransfer.files && e.dataTransfer.files.length) {
+      readFile(e.dataTransfer.files[0]);
+    }
   });
+
+  el.sample.addEventListener('click', loadSample);
 
   el.org.addEventListener('input', function () {
     prefs.org = el.org.value;
@@ -333,31 +399,47 @@
   el.reset.addEventListener('click', function () {
     overrides = {};
     savePrefs();
-    buildHeadingPanel();
+    panelIds = '';
+    syncHeadingPanel();
     refresh();
   });
 
   el.download.addEventListener('click', download);
-  window.addEventListener('resize', function () { if (model) measurePages(); });
+  window.addEventListener('resize', function () {
+    if (model) { measurePages(); fitPreview(); }
+  });
 
   /* ---------------------------------------------------------------- start */
+
+  function loadSample() {
+    return fetch(SAMPLE)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function (md) { setMarkdown(md, SAMPLE.split('/').pop()); })
+      .catch(function (err) {
+        setStatus(location.protocol === 'file:'
+          ? 'Opened over file://, so the browser blocks loading the sample. ' +
+            'Type or paste your Markdown instead, or serve the folder over HTTP.'
+          : 'Could not load the sample (' + err + '). Type or paste instead.',
+          'err');
+      });
+  }
 
   loadPrefs();
   el.org.value = prefs.org;
   el.theme.value = prefs.theme;
 
-  fetch(DEFAULT_SOURCE)
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.text();
-    })
-    .then(function (md) { loadMarkdown(md, DEFAULT_SOURCE); })
-    .catch(function (err) {
-      var isFile = location.protocol === 'file:';
-      setStatus(isFile
-        ? 'Opened over file://, so the browser blocks reading the sample. ' +
-          'Drop a Markdown file above, or serve the folder over HTTP.'
-        : 'Could not load the sample (' + err + '). Drop a Markdown file above.',
-        'err');
-    });
+  if (!window.docx) {
+    setStatus('The docx library did not load, so download is unavailable. ' +
+              'Check your network or ad blocker.', 'err');
+  }
+
+  if (prefs.md) {
+    setMarkdown(prefs.md, 'restored from this browser');
+  } else {
+    reparse();
+    loadSample();
+  }
 })();
