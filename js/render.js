@@ -12,8 +12,8 @@
 (function (global) {
   'use strict';
 
-  /* US Letter in twips (1/1440 in): 8.5in x 11in, 0.75in margins. */
-  var PAGE_W = 12240, PAGE_H = 15840;
+  /* A4 in twips (1/1440 in): 210mm x 297mm, 0.75in margins. */
+  var PAGE_W = 11906, PAGE_H = 16838;
   var MARGIN = 1080;
   var TEXT_W = PAGE_W - 2 * MARGIN;
 

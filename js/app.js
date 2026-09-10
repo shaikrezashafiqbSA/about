@@ -199,7 +199,7 @@
    * treat a result right on the boundary as "check it in Word". */
   function measurePages() {
     var probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;visibility:hidden;height:11in';
+    probe.style.cssText = 'position:absolute;visibility:hidden;height:297mm';
     document.body.appendChild(probe);
     var pageH = probe.offsetHeight;
     document.body.removeChild(probe);
