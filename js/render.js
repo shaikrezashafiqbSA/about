@@ -1,44 +1,42 @@
 /* render.js - block structure -> .docx, built in the browser.
  *
- * Layout decisions carried over from the Python renderer this replaces:
- *   - A4, not US Letter, because the readers are in Singapore
- *   - one column, one linear text stream, no tables or text boxes
- *   - a single accent colour on the name, section rules and bullet labels;
- *     body copy stays near-black so nothing competes for attention
- *   - job title on its own line, employer and right-aligned dates beneath it
+ * This reproduces the "teal and bronze" master resume: a Google Docs export
+ * with US Letter geometry, Calibri throughout, section headings carried on a
+ * thick left bar plus a thin underline, sub-headings on their own left bar,
+ * and employer / date details on one pipe-separated line under each role.
  *
- * Fonts are limited to faces that ship with Word on both Windows and macOS,
- * so the layout does not reflow on the reader's machine.
+ * The look is fixed. It is length agnostic by construction: nothing here caps
+ * or reflows at a page count, so a two-page draft and an eight-page master
+ * come out in the same style.
  */
 (function (global) {
   'use strict';
 
-  /* A4 in twips (1/1440 in): 210mm x 297mm. */
-  var PAGE_W = 11906, PAGE_H = 16838;
-  var MARGIN_X = 1008;              // 0.7in
-  var MARGIN_Y = 792;               // 0.55in
-  var TEXT_W = PAGE_W - 2 * MARGIN_X;
+  /* US Letter in twips (1/1440 in): 8.5in x 11in, 0.75in margins. */
+  var PAGE_W = 12240, PAGE_H = 15840;
+  var MARGIN = 1080;
+  var TEXT_W = PAGE_W - 2 * MARGIN;
 
-  /* Half-points, the unit docx uses for run size. */
+  var FONT = 'Calibri';
+
+  /* Half-points for run sizes. */
   var SZ = {
-    name: 40, contact: 18, headline: 20, subline: 19,
-    section: 21, role: 21, org: 19, subhead: 19, body: 20, small: 19
+    name: 36, contact: 19, headline: 21, subline: 19,
+    section: 23, role: 22, org: 20, context: 19, subhead: 18,
+    body: 20, skillLabel: 17, skillBody: 17,
+    eduDegree: 20, eduMeta: 19
   };
 
-  var THEMES = {
-    navy:     { head: 'Georgia', body: 'Calibri',
-                accent: '1F3A5F', ink: '1A1A1A', muted: '5A5A5A', rule: 'B8C4D4' },
-    charcoal: { head: 'Georgia', body: 'Calibri',
-                accent: '2B2B2B', ink: '1A1A1A', muted: '606060', rule: 'C6C6C6' },
-    teal:     { head: 'Calibri', body: 'Calibri',
-                accent: '14524B', ink: '1A1A1A', muted: '5A5A5A', rule: 'B5CCC8' },
-    plain:    { head: 'Calibri', body: 'Calibri',
-                accent: '000000', ink: '000000', muted: '444444', rule: '999999' }
+  var C = {
+    teal:   '177A9A',   // name, headline, section + role titles, degree, skill label
+    bronze: '8F6E54',   // left bars, sub-headings, employer, subline accent
+    grey:   '595959',   // contact, dates, role context
+    ink:    '262626',   // body copy and bullet labels
+    link:   '1155CC',
+    band:   'E6F2F6'    // skill-card tint (alternating with white)
   };
 
-  /* Inline markup, deliberately limited to the three things a resume needs.
-   * A full markdown inline parser would pull in a dependency to handle syntax
-   * that never appears in this document. */
+  /* Inline markup, deliberately limited to the three things a resume needs. */
   var INLINE_RE = /\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^\]]+)\]\(([^)]+)\)/g;
 
   function assign(a, b) {
@@ -65,7 +63,7 @@
         runs.push(new d.ExternalHyperlink({
           link: m[4],
           children: [new d.TextRun(assign(base, {
-            text: m[3], color: base.color, underline: {}
+            text: m[3], color: C.link, underline: {}
           }))]
         }));
       }
@@ -78,89 +76,74 @@
     return runs;
   }
 
-  function build(model, opts) {
+  function build(model) {
     var d = global.docx;
     if (!d) throw new Error('The docx library did not load.');
 
-    opts = opts || {};
-    var t = THEMES[opts.theme] || THEMES.navy;
+    var S = d.BorderStyle.SINGLE;
     var head = model.header || {};
     var children = [];
+    var skillTick = 0;
 
     function para(o) { return new d.Paragraph(o); }
-
-    var RIGHT_TAB = [{ type: d.TabStopType.RIGHT, position: TEXT_W }];
+    function run(o) { return new d.TextRun(assign({ font: FONT }, o)); }
 
     /* ---- identity block ---- */
     if (head.name) {
       children.push(para({
-        alignment: d.AlignmentType.CENTER,
-        spacing: { after: 40 },
-        children: [new d.TextRun({
-          text: head.name.toUpperCase(), bold: true, allCaps: true,
-          font: t.head, size: SZ.name, color: t.accent, characterSpacing: 20
-        })]
+        spacing: { after: 20 },
+        children: [run({ text: head.name, bold: true, color: C.teal, size: SZ.name })]
       }));
     }
 
     var contactRuns = [];
     if (head.contactText) {
       contactRuns = contactRuns.concat(inlineRuns(head.contactText,
-        { font: t.body, size: SZ.contact, color: t.muted }));
+        { font: FONT, size: SZ.contact, color: C.grey }));
     }
     (head.contactLinks || []).forEach(function (l, i) {
       if (contactRuns.length || i) {
-        contactRuns.push(new d.TextRun({
-          text: '  |  ', font: t.body, size: SZ.contact, color: t.muted
-        }));
+        contactRuns.push(run({ text: '   |   ', size: SZ.contact, color: C.grey }));
       }
       contactRuns.push(new d.ExternalHyperlink({
         link: l.url,
-        children: [new d.TextRun({
-          text: l.label, font: t.body, size: SZ.contact,
-          color: t.accent, underline: {}
-        })]
+        children: [run({ text: l.label, size: SZ.contact, color: C.link, underline: {} })]
       }));
     });
     if (contactRuns.length) {
-      children.push(para({
-        alignment: d.AlignmentType.CENTER,
-        spacing: { after: head.headline ? 60 : 200 },
-        children: contactRuns
-      }));
+      children.push(para({ spacing: { after: 60 }, children: contactRuns }));
     }
 
     if (head.headline) {
       children.push(para({
-        alignment: d.AlignmentType.CENTER,
-        spacing: { after: head.subline ? 20 : 200 },
+        spacing: { after: 20 },
         children: inlineRuns(head.headline,
-          { font: t.head, size: SZ.headline, bold: true, color: t.ink })
+          { font: FONT, size: SZ.headline, bold: true, color: C.teal })
       }));
     }
     if (head.subline) {
       children.push(para({
-        alignment: d.AlignmentType.CENTER,
-        spacing: { after: 200 },
+        spacing: { after: 160 },
+        border: { bottom: { style: S, size: 12, color: C.bronze, space: 6 } },
         children: inlineRuns(head.subline,
-          { font: t.body, size: SZ.subline, italics: true, color: t.muted })
+          { font: FONT, size: SZ.subline, italics: true, color: C.bronze })
       }));
     }
 
     /* ---- sections ---- */
     (model.sections || []).forEach(function (section) {
-      var name = section.displayName;
-      if (name) {
+      if (section.name) {
         children.push(para({
-          spacing: { before: 260, after: 90 },
-          keepNext: true,
+          spacing: { before: 200, after: 100 },
+          keepNext: true, keepLines: true,
           outlineLevel: 0,
           border: {
-            bottom: { style: d.BorderStyle.SINGLE, size: 6, color: t.rule, space: 3 }
+            left:   { style: S, size: 24, color: C.bronze, space: 6 },
+            bottom: { style: S, size: 4,  color: C.teal,   space: 3 }
           },
-          children: [new d.TextRun({
-            text: name.toUpperCase(), bold: true, allCaps: true,
-            font: t.head, size: SZ.section, color: t.accent, characterSpacing: 12
+          children: [run({
+            text: section.name, bold: true, allCaps: true,
+            color: C.teal, size: SZ.section
           })]
         }));
       }
@@ -173,127 +156,119 @@
       switch (b.t) {
         case 'role': {
           var out = [para({
-            spacing: { before: 200, after: 0 },
-            keepNext: true,
-            outlineLevel: 1,
-            children: [new d.TextRun({
-              text: b.role, bold: true, font: t.body, size: SZ.role, color: t.ink
-            })]
+            spacing: { before: 220, after: 20 },
+            keepNext: true, outlineLevel: 1,
+            children: [run({ text: b.role, bold: true, color: C.teal, size: SZ.role })]
           })];
           if (b.org || b.dates) {
-            var runs = [];
+            var meta = [];
             if (b.org) {
-              runs = runs.concat(inlineRuns(b.org,
-                { font: t.body, size: SZ.org, color: t.muted }));
+              meta = meta.concat(inlineRuns(b.org,
+                { font: FONT, size: SZ.org, bold: true, color: C.bronze }));
             }
             if (b.dates) {
-              runs.push(new d.TextRun({ text: '\t', font: t.body, size: SZ.org }));
-              runs.push(new d.TextRun({
-                text: b.dates, font: t.body, size: SZ.org,
-                color: t.muted, italics: true
+              meta.push(run({
+                text: (b.org ? '   |   ' : '') + b.dates,
+                size: SZ.org, color: C.grey
               }));
             }
-            out.push(para({
-              spacing: { after: 70 }, keepNext: true,
-              tabStops: RIGHT_TAB, children: runs
-            }));
+            out.push(para({ spacing: { after: 60 }, keepNext: true, children: meta }));
           }
           return out;
         }
 
-        case 'edu': {
-          var eduRuns = [new d.TextRun({
-            text: b.degree, bold: true, font: t.body, size: SZ.body, color: t.ink
+        case 'context':
+          return [para({
+            spacing: { after: 80, line: 259 },
+            children: inlineRuns(b.text,
+              { font: FONT, size: SZ.context, italics: true, color: C.grey })
           })];
-          if (b.school) {
-            eduRuns.push(new d.TextRun({
-              text: '  -  ' + b.school, font: t.body, size: SZ.body, color: t.ink
-            }));
-          }
-          if (b.year) {
-            eduRuns.push(new d.TextRun({ text: '\t', font: t.body, size: SZ.body }));
-            eduRuns.push(new d.TextRun({
-              text: b.year, font: t.body, size: SZ.small,
-              color: t.muted, italics: true
-            }));
-          }
-          var eduOut = [para({
-            spacing: { before: 120, after: b.note ? 20 : 60 },
-            keepNext: !!b.note, tabStops: RIGHT_TAB, children: eduRuns
-          })];
-          if (b.note) {
-            eduOut.push(para({
-              spacing: { after: 60 },
-              children: inlineRuns(b.note,
-                { font: t.body, size: SZ.small, color: t.muted })
-            }));
-          }
-          return eduOut;
-        }
 
         case 'subhead':
           return [para({
-            spacing: { before: 150, after: 50 }, keepNext: true,
-            outlineLevel: 2,
-            children: [new d.TextRun({
-              text: b.text, bold: true, italics: true,
-              font: t.body, size: SZ.subhead, color: t.accent
+            spacing: { before: 120, after: 40 },
+            keepNext: true, outlineLevel: 2,
+            indent: { left: 80 },
+            border: { left: { style: S, size: 12, color: C.bronze, space: 4 } },
+            children: [run({
+              text: b.text, bold: true, allCaps: true,
+              color: C.bronze, size: SZ.subhead
             })]
           })];
 
         case 'callout':
           return [para({
-            spacing: { before: 80, after: 110 },
-            indent: { left: 220 },
-            border: {
-              left: { style: d.BorderStyle.SINGLE, size: 12, color: t.rule, space: 8 }
-            },
+            spacing: { before: 60, after: 100 },
+            indent: { left: 60 },
+            border: { left: { style: S, size: 18, color: C.teal, space: 8 } },
             children: inlineRuns(b.text,
-              { font: t.body, size: SZ.small, italics: true, color: t.accent })
-          })];
-
-        case 'context':
-          return [para({
-            spacing: { after: 70 },
-            children: inlineRuns(b.text,
-              { font: t.body, size: SZ.small, italics: true, color: t.muted })
+              { font: FONT, size: SZ.context, italics: true, color: C.teal })
           })];
 
         case 'skill': {
-          var skillRuns = [];
+          var tint = (skillTick++ % 2 === 0) ? C.band : 'FFFFFF';
+          var kids = [];
           if (b.label) {
-            skillRuns.push(new d.TextRun({
-              text: b.label + ': ', bold: true,
-              font: t.body, size: SZ.body, color: t.accent
+            kids.push(run({ text: b.label, bold: true, color: C.teal, size: SZ.skillLabel }));
+            if (b.text) kids.push(run({ text: '   ', size: SZ.skillLabel }));
+          }
+          if (b.text) {
+            kids = kids.concat(inlineRuns(b.text,
+              { font: FONT, size: SZ.skillBody, color: C.ink }));
+          }
+          return [para({
+            spacing: { after: 40, line: 240 },
+            shading: { type: d.ShadingType.CLEAR, fill: tint },
+            indent: { left: 40 },
+            border: {
+              left:   { style: S, size: 18, color: C.bronze, space: 5 },
+              top:    { style: S, size: 6,  color: tint,      space: 2 },
+              bottom: { style: S, size: 6,  color: tint,      space: 2 },
+              right:  { style: S, size: 6,  color: tint,      space: 5 }
+            },
+            children: kids
+          })];
+        }
+
+        case 'edu': {
+          var eduMeta = [run({ text: b.degree, bold: true, color: C.teal, size: SZ.eduDegree })];
+          var tail = [];
+          if (b.school) tail.push(b.school);
+          if (b.year) tail.push(b.year);
+          if (tail.length) {
+            eduMeta.push(run({
+              text: '   |   ' + tail.join('   |   '),
+              size: SZ.eduMeta, color: C.grey
             }));
           }
-          skillRuns = skillRuns.concat(inlineRuns(b.text,
-            { font: t.body, size: SZ.body, color: t.ink }));
-          return [para({ spacing: { after: 70 }, children: skillRuns })];
+          var eduOut = [para({ spacing: { after: b.note ? 10 : 100 }, children: eduMeta })];
+          if (b.note) {
+            eduOut.push(para({
+              spacing: { after: 100, line: 264 },
+              children: inlineRuns(b.note, { font: FONT, size: SZ.body, color: C.ink })
+            }));
+          }
+          return eduOut;
         }
 
         case 'bullet': {
-          var bulletRuns = [];
+          var bkids = [];
           if (b.label) {
-            bulletRuns.push(new d.TextRun({
-              text: b.label + ': ', bold: true,
-              font: t.body, size: SZ.body, color: t.accent
-            }));
+            bkids.push(run({ text: b.label + ': ', bold: true, color: C.ink, size: SZ.body }));
           }
-          bulletRuns = bulletRuns.concat(inlineRuns(b.text,
-            { font: t.body, size: SZ.body, color: t.ink }));
+          bkids = bkids.concat(inlineRuns(b.text,
+            { font: FONT, size: SZ.body, color: C.ink }));
           return [para({
-            bullet: { level: 0 },
-            spacing: { after: 60 },
-            children: bulletRuns
+            numbering: { reference: 'resume-bullets', level: 0 },
+            spacing: { after: 50, line: 259 },
+            children: bkids
           })];
         }
 
         default:
           return [para({
-            spacing: { after: 100 },
-            children: inlineRuns(b.text,
-              { font: t.body, size: SZ.body, color: t.ink })
+            spacing: { after: 80, line: 250 },
+            children: inlineRuns(b.text, { font: FONT, size: SZ.body, color: C.ink })
           })];
       }
     }
@@ -303,16 +278,24 @@
       title: (head.name || 'Resume') + ' - Resume',
       description: 'Rendered from Markdown',
       styles: {
-        default: {
-          document: { run: { font: t.body, size: SZ.body, color: t.ink } }
-        }
+        default: { document: { run: { font: FONT, size: SZ.body, color: C.ink } } }
+      },
+      numbering: {
+        config: [{
+          reference: 'resume-bullets',
+          levels: [{
+            level: 0, format: 'bullet', text: '•',
+            alignment: d.AlignmentType.LEFT,
+            style: { paragraph: { indent: { left: 300, hanging: 220 } } }
+          }]
+        }]
       },
       sections: [{
         properties: {
           page: {
             size: { width: PAGE_W, height: PAGE_H },
-            margin: { top: MARGIN_Y, bottom: MARGIN_Y,
-                      left: MARGIN_X, right: MARGIN_X }
+            margin: { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN,
+                      header: 720, footer: 720 }
           }
         },
         children: children
@@ -320,5 +303,5 @@
     });
   }
 
-  global.ResumeRender = { build: build, THEMES: THEMES };
+  global.ResumeRender = { build: build, PALETTE: C };
 })(window);

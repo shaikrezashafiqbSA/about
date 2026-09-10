@@ -5,9 +5,14 @@
  * backslash-escaped punctuation. Clean ATX markdown is accepted too, so
  * hand-written files work.
  *
+ * Section headings are kept verbatim and in source order. The .md already
+ * carries the exact heading text wanted in the document (for example
+ * "## WHO I AM & THE VALUE I BRING TO MEDIACORP"), so nothing here renames,
+ * reorders or canonicalises them.
+ *
  * Two-column tables are flattened into "Label: items" paragraphs rather than
  * emitted as tables. A table keeps its text out of the linear stream, and the
- * whole point of the .docx is that it reads top to bottom in one column.
+ * document is one linear column by design.
  */
 (function (global) {
   'use strict';
@@ -25,43 +30,12 @@
   var EDU_RE      = /^\*\*(.+?)\*\*\s*[–—-]\s*(.+?)\s*\*(?!\*)([^*]+)\*\s*$/;
   var LABEL_RE    = /^\*\*(.+?)\*\*:?\s*(.*)$/;
   /* "**Category** - items" written as a plain line rather than a table row.
-   * Only trusted inside the skills section, where a bold lead-in is always a
+   * Only trusted inside a skills section, where a bold lead-in is always a
    * category label and never a job title. */
   var SKILLROW_RE = /^\*\*(.+?)\*\*\s*[:–—-]\s*(.+)$/;
-
-  /* The seven slots, in the order they must appear in the finished document.
-   * Anything that does not match one of these keeps its own name and is
-   * appended after them in source order. */
-  var ORDER = ['SUMMARY', 'SKILLS', 'EXPERIENCE', 'EDUCATION',
-               'CERTIFICATIONS', 'COMMUNITY', 'LANGUAGES'];
-
-  var DEFAULT_NAMES = {
-    SUMMARY:        'WHO I AM & THE VALUE I BRING TO [ORGANISATION NAME]',
-    SKILLS:         'SKILLS AND CORE COMPETENCIES',
-    EXPERIENCE:     'PROFESSIONAL EXPERIENCE',
-    EDUCATION:      'EDUCATION',
-    CERTIFICATIONS: 'CERTIFICATIONS AND PROFESSIONAL DEVELOPMENT',
-    COMMUNITY:      'COMMUNITY ENGAGEMENT',
-    LANGUAGES:      'LANGUAGES'
-  };
-
-  /* A heading is assigned to the first slot whose synonym appears anywhere in
-   * it, so "CORE COMPETENCIES & TECHNICAL SKILLS" and "Skills" both land in
-   * SKILLS. Longer phrases come first within each list so the specific match
-   * wins over the generic one. */
-  var SYNONYMS = [
-    ['SUMMARY',        ['WHO I AM', 'VALUE I BRING', 'PROFESSIONAL SUMMARY',
-                        'EXECUTIVE SUMMARY', 'SUMMARY', 'PROFILE', 'ABOUT ME']],
-    ['SKILLS',         ['CORE COMPETENC', 'COMPETENC', 'TECHNICAL SKILL',
-                        'KEY SKILL', 'SKILL']],
-    ['EXPERIENCE',     ['PROFESSIONAL EXPERIENCE', 'WORK EXPERIENCE',
-                        'CAREER HISTORY', 'EMPLOYMENT', 'EXPERIENCE']],
-    ['EDUCATION',      ['EDUCATION', 'ACADEMIC']],
-    ['CERTIFICATIONS', ['CERTIFICAT', 'PROFESSIONAL DEVELOPMENT', 'TRAINING',
-                        'COURSES', 'ACCREDITATION']],
-    ['COMMUNITY',      ['COMMUNITY', 'VOLUNTEER', 'OUTREACH']],
-    ['LANGUAGES',      ['LANGUAGE']]
-  ];
+  /* A short italic line straight after a role heading is its date range, not a
+   * scope note: it names a year, or "Present" / "Ongoing", and little else. */
+  var DATE_RE     = /\b(19|20)\d{2}\b|\bpresent\b|\bongoing\b/i;
 
   function unescapeMd(s) { return s.replace(ESCAPE_RE, '$1'); }
 
@@ -82,15 +56,8 @@
     return letters.length >= 3 && letters === letters.toUpperCase();
   }
 
-  function classify(name) {
-    var up = name.toUpperCase();
-    for (var i = 0; i < SYNONYMS.length; i++) {
-      var key = SYNONYMS[i][0], words = SYNONYMS[i][1];
-      for (var j = 0; j < words.length; j++) {
-        if (up.indexOf(words[j]) !== -1) return key;
-      }
-    }
-    return null;
+  function isSkillsHeading(name) {
+    return /\bskills?\b|\bcompetenc/i.test(name);
   }
 
   function splitRole(bold) {
@@ -108,30 +75,34 @@
     this.stage = 0;           // 0 name, 1 contact, 2 headline, 3 subline, 4 body
     this.inEducation = false;
     this.inSkills = false;
+    this.pendingRole = null;  // a role block still waiting for its date line
   }
 
   Parser.prototype.push = function (block) {
     if (!this.current) {
       /* Content before any heading: a nameless leading section. It renders
        * straight after the identity block with no heading of its own. */
-      this.current = { key: null, sourceName: '', blocks: [] };
+      this.current = { name: '', blocks: [] };
       this.sections.push(this.current);
     }
     this.current.blocks.push(block);
+    if (block.t !== 'role') this.pendingRole = null;
   };
 
   Parser.prototype.addSection = function (name) {
-    var key = classify(name);
-    this.inEducation = (key === 'EDUCATION');
-    this.inSkills = (key === 'SKILLS');
-    /* A repeated heading reopens the section already holding that slot, so a
+    name = name.trim();
+    this.inEducation = /\beducation\b|\bacademic\b/i.test(name);
+    this.inSkills = isSkillsHeading(name);
+    this.pendingRole = null;
+    /* A repeated heading reopens the section already carrying that text, so a
      * resume split across two "EXPERIENCE" blocks does not render twice. */
-    if (key) {
-      for (var i = 0; i < this.sections.length; i++) {
-        if (this.sections[i].key === key) { this.current = this.sections[i]; return; }
+    for (var i = 0; i < this.sections.length; i++) {
+      if (this.sections[i].name.toUpperCase() === name.toUpperCase() && name) {
+        this.current = this.sections[i];
+        return;
       }
     }
-    this.current = { key: key, sourceName: name.trim(), blocks: [] };
+    this.current = { name: name, blocks: [] };
     this.sections.push(this.current);
   };
 
@@ -155,6 +126,12 @@
     }
   };
 
+  Parser.prototype.addRole = function (role, org, dates) {
+    var block = { t: 'role', role: role, org: org, dates: dates || '' };
+    this.push(block);
+    this.pendingRole = block;   // set after push, which would otherwise clear it
+  };
+
   /* Absorb the first four meaningful lines as the identity block. */
   Parser.prototype.consumeHeader = function (line) {
     var m;
@@ -169,7 +146,7 @@
       var links = [], lm;
       LINK_RE.lastIndex = 0;
       while ((lm = LINK_RE.exec(line)) !== null) {
-        links.push({ label: lm[1], url: lm[2] });
+        links.push({ label: lm[1].trim(), url: lm[2] });
       }
       this.header.contactLinks = links;
       this.header.contactText = line.replace(LINK_RE, '')
@@ -228,7 +205,7 @@
           this.addSection(text);
         } else if (depth === 3) {
           var rs = splitRole(text);
-          this.push({ t: 'role', role: rs[0], org: rs[1], dates: '' });
+          this.addRole(rs[0], rs[1], '');
         } else {
           this.push({ t: 'subhead', text: text });
         }
@@ -239,7 +216,13 @@
       if (m) { this.addBullet(m[1].trim()); continue; }
 
       m = TRIBOLD_RE.exec(line);
-      if (m) { this.push({ t: 'subhead', text: m[1].trim() }); continue; }
+      if (m) {
+        var tri = m[1].trim();
+        this.push(/^guiding principle/i.test(tri)
+          ? { t: 'callout', text: tri }
+          : { t: 'subhead', text: tri });
+        continue;
+      }
 
       if (this.inEducation) {
         m = EDU_RE.exec(line);
@@ -261,7 +244,7 @@
       m = BOLDITAL_RE.exec(line);
       if (m) {
         var r = splitRole(m[1]);
-        this.push({ t: 'role', role: r[0], org: r[1], dates: m[2].trim() });
+        this.addRole(r[0], r[1], m[2].trim());
         continue;
       }
 
@@ -272,7 +255,7 @@
           this.addSection(bold);
         } else if (bold.indexOf('|') !== -1) {
           var r2 = splitRole(bold);
-          this.push({ t: 'role', role: r2[0], org: r2[1], dates: '' });
+          this.addRole(r2[0], r2[1], '');
         } else {
           this.push({ t: 'para', text: line });
         }
@@ -282,8 +265,15 @@
       m = FULLITAL_RE.exec(line);
       if (m) {
         var it = m[1].trim();
-        this.push({ t: /^guiding principle/i.test(it) ? 'callout' : 'context',
-                    text: it });
+        /* Fold a short date-shaped italic line into the role above it. */
+        if (this.pendingRole && it.length <= 60 && DATE_RE.test(it)) {
+          this.pendingRole.dates = it;
+          this.pendingRole = null;
+          continue;
+        }
+        this.push(/^guiding principle/i.test(it)
+          ? { t: 'callout', text: it }
+          : { t: 'context', text: it });
         continue;
       }
 
@@ -302,42 +292,7 @@
     return { header: this.header, sections: this.sections };
   };
 
-  /* Canonical slots first in fixed order, then anything unrecognised. */
-  function orderSections(sections) {
-    var out = [], seen = [];
-    ORDER.forEach(function (key) {
-      sections.forEach(function (s) {
-        if (s.key === key) { out.push(s); seen.push(s); }
-      });
-    });
-    sections.forEach(function (s) {
-      if (seen.indexOf(s) === -1) out.push(s);
-    });
-    return out;
-  }
-
-  /* An empty organisation drops the whole trailing "TO [ORGANISATION NAME]"
-   * clause, so the heading still reads as a sentence before you tailor it. */
-  function applyOrg(name, org) {
-    if (org && org.trim()) {
-      return name.replace(/\[ORGANISATION NAME\]/g, org.trim().toUpperCase());
-    }
-    return name.replace(/\s*(TO\s+)?\[ORGANISATION NAME\]/g, '').trim();
-  }
-
-  function defaultName(section) {
-    return section.key ? DEFAULT_NAMES[section.key] : section.sourceName;
-  }
-
   global.ResumeParse = {
-    parse: function (md) {
-      var r = new Parser().parse(md);
-      r.sections = orderSections(r.sections);
-      return r;
-    },
-    applyOrg: applyOrg,
-    defaultName: defaultName,
-    DEFAULT_NAMES: DEFAULT_NAMES,
-    ORDER: ORDER
+    parse: function (md) { return new Parser().parse(md); }
   };
 })(window);

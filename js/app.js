@@ -9,18 +9,18 @@
   'use strict';
 
   var SAMPLE = 'content/Shaik_Reza_Shafiq_Resume.md';
-  var STORE = 'resume-render.v1';
+  var STORE = 'resume-render.v2';
   var DEBOUNCE_MS = 180;
+  var BASE_NAME = 'Shaik_Reza_Shafiq_Resume';
 
   var el = {
     editor:   document.getElementById('editor'),
     file:     document.getElementById('file'),
     open:     document.getElementById('open'),
     sample:   document.getElementById('sample'),
-    org:      document.getElementById('org'),
-    theme:    document.getElementById('theme'),
-    headings: document.getElementById('headings'),
-    reset:    document.getElementById('reset'),
+    role:     document.getElementById('role'),
+    filename: document.getElementById('filename'),
+    fnote:    document.getElementById('filename-note'),
     download: document.getElementById('download'),
     status:   document.getElementById('status'),
     pages:    document.getElementById('pages'),
@@ -33,30 +33,24 @@
   };
 
   var model = null;         // { header, sections }
-  var overrides = {};       // section id -> heading text typed by the user
-  var prefs = { org: '', theme: 'navy', md: '' };
-  var panelIds = '';        // section ids the heading panel was built for
+  var prefs = { role: '', filename: '', filenameEdited: false, md: '' };
   var timer = null;
 
   /* ---------------------------------------------------------------- state */
 
-  function sectionId(s) { return s.key || ('~' + s.sourceName.toUpperCase()); }
-
   function loadPrefs() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
-      overrides = saved.overrides || {};
-      prefs.org = saved.org || '';
-      prefs.theme = saved.theme || 'navy';
+      prefs.role = saved.role || '';
+      prefs.filename = saved.filename || '';
+      prefs.filenameEdited = !!saved.filenameEdited;
       prefs.md = typeof saved.md === 'string' ? saved.md : '';
     } catch (e) { /* private window, cleared storage: defaults are fine */ }
   }
 
   function savePrefs() {
     try {
-      localStorage.setItem(STORE, JSON.stringify({
-        overrides: overrides, org: prefs.org, theme: prefs.theme, md: prefs.md
-      }));
+      localStorage.setItem(STORE, JSON.stringify(prefs));
     } catch (e) { /* nothing here is worth failing a render over */ }
   }
 
@@ -65,63 +59,34 @@
     el.status.className = msg ? ('status ' + (kind || '')) : 'status';
   }
 
-  /* --------------------------------------------------------------- naming */
+  /* --------------------------------------------------------- file naming */
 
-  function templateFor(section) {
-    var id = sectionId(section);
-    return overrides[id] !== undefined
-      ? overrides[id]
-      : window.ResumeParse.defaultName(section);
+  function slug(s) {
+    return String(s || '').trim().replace(/[^A-Za-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
   }
 
-  function applyNames() {
-    model.sections.forEach(function (s) {
-      s.displayName = window.ResumeParse.applyOrg(templateFor(s), prefs.org);
-    });
+  function defaultFilename() {
+    var r = slug(prefs.role);
+    return (r ? BASE_NAME + '_' + r : BASE_NAME) + '.docx';
   }
 
-  /* The panel is rebuilt only when the set of sections actually changes.
-   * Rebuilding on every keystroke would throw away the caret of anyone
-   * editing a heading while the editor still holds focus elsewhere. */
-  function syncHeadingPanel() {
-    var ids = model.sections.map(sectionId).join('');
-    if (ids === panelIds) return;
-    panelIds = ids;
-    el.headings.innerHTML = '';
+  function ensureDocx(name) {
+    name = String(name || '').trim();
+    if (!name) return defaultFilename();
+    return /\.docx$/i.test(name) ? name : name + '.docx';
+  }
 
-    if (!model.sections.length) {
-      el.headings.innerHTML =
-        '<p class="hint">No sections yet. A line in ALL CAPS bold, or one ' +
-        'starting with ##, becomes a section heading.</p>';
-      return;
+  /* The file-name box tracks the role until the moment it is hand-edited,
+   * then it holds whatever was typed. Clearing it hands control back. */
+  function syncFilename() {
+    if (!prefs.filenameEdited) {
+      prefs.filename = defaultFilename();
+      el.filename.value = prefs.filename;
     }
-
-    model.sections.forEach(function (s) {
-      var id = sectionId(s);
-      var row = document.createElement('label');
-      row.className = 'heading-row';
-
-      var tag = document.createElement('span');
-      tag.className = 'heading-tag' + (s.key ? '' : ' custom');
-      tag.textContent = s.key || 'other';
-      tag.title = s.key
-        ? 'Matched from "' + s.sourceName + '"'
-        : 'No canonical slot matched; this section keeps its own name and sits last';
-
-      var input = document.createElement('input');
-      input.type = 'text';
-      input.value = templateFor(s);
-      input.spellcheck = false;
-      input.addEventListener('input', function () {
-        overrides[id] = input.value;
-        savePrefs();
-        refresh();
-      });
-
-      row.appendChild(tag);
-      row.appendChild(input);
-      el.headings.appendChild(row);
-    });
+    el.fnote.textContent = prefs.filenameEdited
+      ? 'Custom name. Clear the box to track the role again.'
+      : 'Default. Edit to override.';
   }
 
   /* -------------------------------------------------------------- preview */
@@ -147,33 +112,42 @@
     return out + esc(text.slice(last));
   }
 
+  var skillTick = 0;
+
   function blockHtml(b) {
     switch (b.t) {
       case 'role': {
         var h = '<p class="r-role">' + esc(b.role) + '</p>';
         if (b.org || b.dates) {
-          h += '<p class="r-org"><span>' + inlineHtml(b.org) + '</span>' +
-               '<span class="r-dates">' + esc(b.dates) + '</span></p>';
+          h += '<p class="r-org">';
+          if (b.org) h += '<span class="r-emp">' + inlineHtml(b.org) + '</span>';
+          if (b.dates) h += '<span class="r-dates">' + (b.org ? '&nbsp;&nbsp;|&nbsp;&nbsp;' : '') + esc(b.dates) + '</span>';
+          h += '</p>';
         }
         return h;
       }
-      case 'edu': {
-        var e = '<p class="r-edu"><span><strong>' + esc(b.degree) + '</strong>' +
-                (b.school ? '  -  ' + esc(b.school) : '') + '</span>' +
-                '<span class="r-dates">' + esc(b.year) + '</span></p>';
-        if (b.note) e += '<p class="r-note">' + inlineHtml(b.note) + '</p>';
-        return e;
-      }
+      case 'context':
+        return '<p class="r-context">' + inlineHtml(b.text) + '</p>';
       case 'subhead':
         return '<p class="r-subhead">' + esc(b.text) + '</p>';
       case 'callout':
         return '<p class="r-callout">' + inlineHtml(b.text) + '</p>';
-      case 'context':
-        return '<p class="r-context">' + inlineHtml(b.text) + '</p>';
-      case 'skill':
-        return '<p class="r-skill">' +
-               (b.label ? '<strong>' + esc(b.label) + ': </strong>' : '') +
+      case 'skill': {
+        var alt = (skillTick++ % 2 === 1) ? ' alt' : '';
+        return '<p class="r-skill' + alt + '">' +
+               (b.label ? '<span class="r-skill-label">' + esc(b.label) + '</span>&nbsp;&nbsp;&nbsp;' : '') +
                inlineHtml(b.text) + '</p>';
+      }
+      case 'edu': {
+        var tail = [];
+        if (b.school) tail.push(esc(b.school));
+        if (b.year) tail.push(esc(b.year));
+        var e = '<p class="r-edu"><span class="r-deg">' + esc(b.degree) + '</span>' +
+                (tail.length ? '<span class="r-edu-meta">&nbsp;&nbsp;|&nbsp;&nbsp;' +
+                  tail.join('&nbsp;&nbsp;|&nbsp;&nbsp;') + '</span>' : '') + '</p>';
+        if (b.note) e += '<p class="r-note">' + inlineHtml(b.note) + '</p>';
+        return e;
+      }
       case 'bullet':
         return '<p class="r-bullet">' +
                (b.label ? '<strong>' + esc(b.label) + ': </strong>' : '') +
@@ -189,27 +163,25 @@
 
     var contact = h.contactText ? inlineHtml(h.contactText) : '';
     (h.contactLinks || []).forEach(function (l) {
-      if (contact) contact += '  |  ';
+      if (contact) contact += '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;';
       contact += '<a href="' + esc(l.url) + '">' + esc(l.label) + '</a>';
     });
     if (contact) out += '<p class="r-contact">' + contact + '</p>';
     if (h.headline) out += '<p class="r-headline">' + inlineHtml(h.headline) + '</p>';
     if (h.subline) out += '<p class="r-subline">' + inlineHtml(h.subline) + '</p>';
 
+    skillTick = 0;
     model.sections.forEach(function (s) {
-      if (s.displayName) {
-        out += '<p class="r-section">' + esc(s.displayName) + '</p>';
-      }
+      if (s.name) out += '<p class="r-section">' + esc(s.name) + '</p>';
       s.blocks.forEach(function (b) { out += blockHtml(b); });
     });
 
     el.sheet.innerHTML = out;
-    document.body.setAttribute('data-theme', prefs.theme);
     measurePages();
     fitPreview();
   }
 
-  /* The sheet is a fixed 210mm wide. Rather than force a horizontal scrollbar
+  /* The sheet is a fixed 8.5in wide. Rather than force a horizontal scrollbar
    * on a laptop, scale it down to whatever width the column has. Transforms do
    * not change layout metrics, so the page measurement below stays honest. */
   function fitPreview() {
@@ -227,7 +199,7 @@
    * treat a result right on the boundary as "check it in Word". */
   function measurePages() {
     var probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;visibility:hidden;height:297mm';
+    probe.style.cssText = 'position:absolute;visibility:hidden;height:11in';
     document.body.appendChild(probe);
     var pageH = probe.offsetHeight;
     document.body.removeChild(probe);
@@ -245,29 +217,18 @@
       line.dataset.label = 'page ' + (i + 1);
       el.rules.appendChild(line);
     }
-
     el.pages.textContent = count + (count === 1 ? ' page' : ' pages') + ' (estimated)';
-    el.pages.className = count > 3 ? 'pages over' : 'pages';
-    if (count > 3) {
-      setStatus('Over three pages. Trim in this order: Languages, then Community ' +
-                'Engagement, then the lowest-relevance bullets in the oldest roles.',
-                'warn');
-    } else if (el.status.classList.contains('warn')) {
-      setStatus('');
-    }
   }
 
   /* --------------------------------------------------------------- render */
 
   function refresh() {
     if (!model) return;
-    applyNames();
     renderPreview();
   }
 
   function reparse() {
     model = window.ResumeParse.parse(el.editor.value);
-    syncHeadingPanel();
     refresh();
     el.download.disabled = !window.docx || !el.editor.value.trim();
   }
@@ -287,13 +248,7 @@
     prefs.md = md;
     savePrefs();
     el.source.textContent = label || '';
-    panelIds = '';                       // a new document: rebuild the panel
     reparse();
-  }
-
-  function slug(s) {
-    return String(s || '').trim().replace(/[^A-Za-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '');
   }
 
   function download() {
@@ -304,13 +259,9 @@
 
     setTimeout(function () {
       try {
-        var doc = window.ResumeRender.build(model, { theme: prefs.theme });
+        var doc = window.ResumeRender.build(model);
         window.docx.Packer.toBlob(doc).then(function (blob) {
-          var parts = [slug(model.header.name) || 'Resume'];
-          if (prefs.org) parts.push(slug(prefs.org));
-          parts.push('Resume');
-          var filename = parts.join('_') + '.docx';
-
+          var filename = ensureDocx(el.filename.value);
           var url = URL.createObjectURL(blob);
           var a = document.createElement('a');
           a.href = url;
@@ -384,24 +335,19 @@
 
   el.sample.addEventListener('click', loadSample);
 
-  el.org.addEventListener('input', function () {
-    prefs.org = el.org.value;
+  el.role.addEventListener('input', function () {
+    prefs.role = el.role.value;
+    syncFilename();
     savePrefs();
-    refresh();
   });
 
-  el.theme.addEventListener('change', function () {
-    prefs.theme = el.theme.value;
+  el.filename.addEventListener('input', function () {
+    prefs.filenameEdited = el.filename.value.trim() !== '' &&
+                           el.filename.value.trim() !== defaultFilename();
+    prefs.filename = el.filename.value;
+    if (!prefs.filenameEdited) syncFilename();
+    else el.fnote.textContent = 'Custom name. Clear the box to track the role again.';
     savePrefs();
-    refresh();
-  });
-
-  el.reset.addEventListener('click', function () {
-    overrides = {};
-    savePrefs();
-    panelIds = '';
-    syncHeadingPanel();
-    refresh();
   });
 
   el.download.addEventListener('click', download);
@@ -428,8 +374,9 @@
   }
 
   loadPrefs();
-  el.org.value = prefs.org;
-  el.theme.value = prefs.theme;
+  el.role.value = prefs.role;
+  syncFilename();
+  if (prefs.filenameEdited && prefs.filename) el.filename.value = prefs.filename;
 
   if (!window.docx) {
     setStatus('The docx library did not load, so download is unavailable. ' +
