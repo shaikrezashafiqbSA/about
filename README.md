@@ -65,14 +65,14 @@ a plain line straight after it folds in as a coursework note.
 
 Tables are flattened to `Label: items` rows rather than rendered as tables. The
 document is one linear column by design, and text inside a table cell sits
-outside that stream.
+outside that stream. A `---` thematic-break line is dropped.
 
 Inline `**bold**`, `*italic*` and `[text](url)` are honoured everywhere. Nothing
 else is parsed.
 
 ## Style
 
-One fixed look, reproduced from the master resume: US Letter, 0.75 in margins,
+One fixed look, reproduced from the master resume: A4, 0.75 in margins,
 Calibri throughout, a teal (`#177A9A`) and bronze (`#8F6E54`) palette. Section
 headings sit on a thick bronze left bar with a thin teal underline;
 sub-headings on their own bronze bar; each role's employer and dates share one

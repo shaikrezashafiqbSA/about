@@ -21,6 +21,9 @@
   var LINK_RE     = /\[([^\]]+)\]\(([^)]+)\)/g;
   var ROW_RE      = /^\|(.+)\|\s*$/;
   var SEP_RE      = /^\|[\s:|\-]+\|\s*$/;
+  /* Markdown thematic break: 3+ of -, * or _, optionally space-separated.
+   * Resumes carry these as visual dividers; they have no place in the .docx. */
+  var HRULE_RE    = /^ {0,3}([-*_])[ \t]*(?:\1[ \t]*){2,}$/;
   var BULLET_RE   = /^[*+\-]\s+(.*)$/;
   var ATX_RE      = /^(#{1,6})\s+(.*)$/;
   var TRIBOLD_RE  = /^\*\*\*(.+?)\*\*\*$/;
@@ -184,6 +187,7 @@
     for (var i = 0; i < lines.length; i++) {
       var line = unescapeMd(lines[i].trim());
       if (!line) { this.flushTable(); continue; }
+      if (HRULE_RE.test(line)) { this.flushTable(); continue; }
 
       if (ROW_RE.test(line)) {
         if (SEP_RE.test(line)) continue;
