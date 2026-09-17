@@ -1,6 +1,0 @@
-# Local Claude Code preview config and machine-specific settings
-.claude/
-
-# OS cruft
-.DS_Store
-Thumbs.db
