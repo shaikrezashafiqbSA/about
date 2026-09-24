@@ -12,14 +12,3 @@ straight to GitHub Pages.
 | `web/atelier/` | The 3D scene, skill tree and dialogue behind `index.html`. |
 | `content/` | Resume and pitch in Markdown — the source of truth for the pages above. |
 | `dev/serve.ps1` | Minimal local static server. |
-
-## Running locally
-
-Several pages fetch content at runtime and load ES modules, both of which browsers
-block over `file://`. Serve it instead of double-clicking:
-
-```bash
-powershell -ExecutionPolicy Bypass -File dev/serve.ps1
-```
-
-Then open <http://localhost:8000/>.
