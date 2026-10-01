@@ -5,10 +5,11 @@ straight to GitHub Pages.
 
 | Path | What it is |
 |---|---|
-| `index.html` | The landing page: a 3D oasis masjid with a scholar living in it, and the portfolio menu docked right. See `web/atelier/README.md`. |
+| `index.html` | The landing page: a crystal palace, drawn in code, where a scribe (you can walk him around) studies, writes and forges swords. Menu docked right. See `web/sanctuary/README.md`. |
 | `web/render.html` | The styled CV, rendered from `content/`. |
-| `web/matcher.html` | Local-AI job matcher (WebLLM / Chrome built-in AI). |
-| `web/ask.html` | "Ask me anything", answered from the elevator pitch. |
-| `web/atelier/` | The 3D scene, skill tree and dialogue behind `index.html`. |
-| `content/` | Resume and pitch in Markdown — the source of truth for the pages above. |
+| `web/sanctuary/` | The 2D scene, the scribe, his controls, and the "Speak with him" chat behind `index.html`. |
+| `content/` | Resume and pitch in Markdown — the source of truth for the pages above and the chat. |
 | `dev/serve.ps1` | Minimal local static server. |
+
+**Resume Render** (markdown → styled CV / .docx) lives in its own repo and is linked from the menu:
+<https://shaikrezashafiqbsa.github.io/md-to-docx-resume/>
