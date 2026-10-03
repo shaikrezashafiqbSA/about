@@ -18,7 +18,7 @@ export const BLD = { x0: 400, x1: 2680 };    // the palace itself
 export const SHAFT = { x0: 1045, x1: 1215, x: 1130 };   // the carpet's shaft
 export const SLAB_F3 = [[400, 1045], [1215, 1750]];            // the prayer hall and garden court
 export const SLAB_F2 = [[400, 1045], [1215, 2680]];            // the whole ground floor, out to the terrace and the gate
-const BY0 = -420, BH = 2340;                 // baked region: y -420 .. 1740
+const BY0 = -420, BH = 3000;                 // baked region: y -420 .. 2580 (the pillar runs off the bottom of the world)
 export const BAKE_Y0 = BY0, BAKE_Y1 = BY0 + BH;
 export const TAU = Math.PI * 2;
 const SLAB_T = 50;                           // floor thickness
@@ -168,9 +168,47 @@ export function loadArt() {
     }))).then(list => {
         ART = {};
         list.forEach(([k, img]) => { if (img) ART[k] = img; });
+        ART.rock = makeRockTile();       // the painted rock tile has foliage in its corner; stone is drawn instead
         for (const k of Object.keys(TILES)) delete TILES[k];
+        TILES.rock = ART.rock;           // already seamless: mirroring it would print a kaleidoscope
         return ART;
     });
+}
+
+/** Pure stone: slate-brown, faceted blocks, hairline cracks, bedding planes and grit. No growth. */
+function makeRockTile() {
+    const S = 256, cv = offscreen(S, S), c = cv.getContext("2d");
+    const r = rng(2024);
+    c.fillStyle = "#5c5048"; c.fillRect(0, 0, S, S);
+    for (let i = 0; i < 70; i++) {                                           // big soft faces of slightly different stone
+        const x = r() * S, y = r() * S, w = 40 + r() * 90, h = 14 + r() * 40, a = (r() - 0.5) * 0.3;
+        const l = r() < 0.5;
+        for (const [dx, dy] of [[0, 0], [-S, 0], [S, 0], [0, -S], [0, S]]) {   // wrap so the tile repeats
+            c.save(); c.translate(x + dx, y + dy); c.rotate(a);
+            c.fillStyle = l ? `rgba(190,165,135,${0.05 + r() * 0.08})` : `rgba(28,20,24,${0.08 + r() * 0.12})`;
+            c.fillRect(-w / 2, -h / 2, w, h); c.restore();
+        }
+    }
+    c.lineCap = "round";
+    for (let i = 0; i < 16; i++) {                                           // bedding planes
+        const y = r() * S, amp = 2 + r() * 5, ph = r() * 6;
+        c.strokeStyle = r() < 0.6 ? "rgba(30,20,26,0.5)" : "rgba(235,210,170,0.2)"; c.lineWidth = 1 + r() * 2.2;
+        c.beginPath();
+        for (let x = 0; x <= S; x += 8) { const yy = y + Math.sin(x / S * Math.PI * 4 + ph) * amp; x ? c.lineTo(x, yy) : c.moveTo(x, yy); }
+        c.stroke();
+    }
+    for (let i = 0; i < 24; i++) {                                           // angular cracks
+        let x = r() * S, y = r() * S;
+        c.strokeStyle = "rgba(24,16,22,0.55)"; c.lineWidth = 0.8 + r() * 1.4;
+        c.beginPath(); c.moveTo(x, y);
+        for (let k = 0; k < 4; k++) { x += (r() - 0.5) * 50; y += 10 + r() * 28; c.lineTo(x, y); }
+        c.stroke();
+    }
+    for (let i = 0; i < 700; i++) {                                          // grit
+        c.fillStyle = r() < 0.5 ? `rgba(20,14,18,${0.08 + r() * 0.2})` : `rgba(230,205,170,${0.05 + r() * 0.12})`;
+        c.fillRect(r() * S, r() * S, 1 + r() * 2.5, 1 + r() * 2);
+    }
+    return cv;
 }
 
 const iw = img => img.naturalWidth || img.width;
@@ -318,8 +356,8 @@ function offscreen(w, h) {
 
 // -------------------------------------------------- the island (terrain, rock)
 
-const RIGHT_EDGE = [[3050, 700], [3040, 820], [3000, 960], [2935, 1090], [2870, 1210], [2760, 1320], [2560, 1420], [2330, 1500], [2150, 1590], [2010, 1700], [1990, 1860]];
-const LEFT_EDGE = [[60, 700], [75, 830], [120, 960], [200, 1090], [320, 1210], [500, 1320], [760, 1420], [1000, 1500], [1180, 1590], [1240, 1700], [1250, 1860]];
+const RIGHT_EDGE = [[3050, 700], [3040, 820], [3000, 960], [2935, 1090], [2870, 1210], [2760, 1320], [2560, 1420], [2330, 1500], [2150, 1590], [2010, 1700], [1990, 1860], [1996, 2100], [1990, 2600]];
+const LEFT_EDGE = [[60, 700], [75, 830], [120, 960], [200, 1090], [320, 1210], [500, 1320], [760, 1420], [1000, 1500], [1180, 1590], [1240, 1700], [1250, 1860], [1244, 2100], [1250, 2600]];
 const GRASS_Y = 700;
 
 function islandPath(c) {
@@ -404,14 +442,14 @@ function drawRock(c) {
     const pat = tilePattern(c, "rock", 2.3, 0, GRASS_Y);
     if (pat) {
         c.fillStyle = pat;
-        c.fillRect(0, GRASS_Y - 10, W, 1250);
-        const sh = c.createLinearGradient(0, GRASS_Y, 0, 1900);               // lit from above, heavy underneath
+        c.fillRect(0, GRASS_Y - 10, W, 1900);
+        const sh = c.createLinearGradient(0, GRASS_Y, 0, 2300);               // lit from above, heavy underneath
         sh.addColorStop(0, "rgba(255,230,180,0.1)"); sh.addColorStop(1, "rgba(30,20,28,0.45)");
-        c.fillStyle = sh; c.fillRect(0, GRASS_Y - 10, W, 1250);
+        c.fillStyle = sh; c.fillRect(0, GRASS_Y - 10, W, 1900);
     } else {
-        const g = c.createLinearGradient(0, GRASS_Y, 0, 1900);
+        const g = c.createLinearGradient(0, GRASS_Y, 0, 2300);
         g.addColorStop(0, "#9a8468"); g.addColorStop(0.3, "#7a6650"); g.addColorStop(1, "#4a3c34");
-        c.fillStyle = g; c.fillRect(0, GRASS_Y - 10, W, 1250);
+        c.fillStyle = g; c.fillRect(0, GRASS_Y - 10, W, 1900);
     }
     const r = rng(11);
     for (let i = 0; i < 40; i++) {                                           // strata, inked
@@ -424,6 +462,16 @@ function drawRock(c) {
     }
     hatch(c, 40, 760, 700, 800, 11, 0.07);
     hatch(c, 2400, 760, 700, 800, 11, 0.07);
+    const rp = rng(31);
+    for (let i = 0; i < 46; i++) {                                           // strata down the pillar's shaft
+        const y = 1500 + rp() * 1100, x0 = 1150 + rp() * 700, len = 160 + rp() * 420;
+        c.strokeStyle = rp() < 0.6 ? "rgba(40,24,36,0.32)" : "rgba(255,230,190,0.14)";
+        c.lineWidth = 1.5 + rp() * 3;
+        c.beginPath(); c.moveTo(x0, y);
+        for (let k = 1; k <= 8; k++) c.lineTo(x0 + (len * k) / 8, y + Math.sin(k * 1.3 + i) * 8);
+        c.stroke();
+    }
+    hatch(c, 1250, 1700, 740, 900, 11, 0.07);
     c.restore();
     c.strokeStyle = INK; c.lineWidth = 4.5;                                  // the cliff outline
     c.beginPath(); islandPath(c); c.stroke();
@@ -559,20 +607,50 @@ function drawPoolRim(c) {
     c.fillStyle = pat || "#7a6650"; c.fill(); c.strokeStyle = INK; c.lineWidth = 4; c.stroke();
 }
 
-/** Where the pillar meets the valley floor: heavy growth and rubble. */
+/** The pillar runs on down, off the bottom of the world: bare rock, with ivy climbing it. */
 function drawPillarBase(c) {
     const r = rng(303);
-    for (let i = 0; i < 50; i++) {
-        const x = 1120 + r() * 1000, y = 1856 + (r() - 0.3) * 36, rad = 22 + r() * 40;
-        shape(c, p => p.ellipse(x, y, rad * 1.3, rad * 0.8, 0, 0, TAU), ["#3f8a48", "#357a40", "#4a9a52", "#2f6a3a"][i % 4], INK, 2);
-        c.fillStyle = "rgba(255,255,200,0.16)"; c.beginPath(); c.ellipse(x - rad * 0.3, y - rad * 0.3, rad * 0.6, rad * 0.3, 0, 0, TAU); c.fill();
+    const edgeL = y => { for (let i = 1; i < LEFT_EDGE.length; i++) if (y <= LEFT_EDGE[i][1]) return lerp(LEFT_EDGE[i - 1][0], LEFT_EDGE[i][0], (y - LEFT_EDGE[i - 1][1]) / (LEFT_EDGE[i][1] - LEFT_EDGE[i - 1][1])); return LEFT_EDGE[LEFT_EDGE.length - 1][0]; };
+    const leaf = (x, y, ang, len, col) => {
+        c.save(); c.translate(x, y); c.rotate(ang);
+        c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(len * 0.5, -len * 0.42, len, 0); c.quadraticCurveTo(len * 0.5, len * 0.42, 0, 0); c.closePath();
+        c.fillStyle = col; c.fill(); c.strokeStyle = INK; c.lineWidth = 1.2; c.stroke();
+        c.strokeStyle = "rgba(220,255,200,0.4)"; c.lineWidth = 0.9;
+        c.beginPath(); c.moveTo(len * 0.1, 0); c.lineTo(len * 0.85, 0); c.stroke();
+        c.restore();
+    };
+    const GREENS = ["#3f8a4a", "#4a9a52", "#357a40", "#5aa65a"];
+    c.lineCap = "round"; c.lineJoin = "round";
+    const vine = (x, y, len, side, sway) => {                                // one climbing vine, drawn as a curved stem with leaves
+        const pts = [];
+        for (let k = 0; k <= 14; k++) { const t = k / 14; pts.push([x + Math.sin(t * 5 + sway) * 24 * side + t * 14 * side, y - t * len]); }
+        for (const [w, col] of [[9, INK], [5.5, "#3a6a34"]]) {
+            c.strokeStyle = col; c.lineWidth = w; c.beginPath();
+            pts.forEach((q, k) => (k ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1])));
+            c.stroke();
+        }
+        pts.forEach((q, k) => {
+            if (k < 1) return;
+            const up = -Math.PI / 2;
+            leaf(q[0], q[1], up + side * (0.9 + r() * 0.5), 26 + r() * 14, GREENS[(k + (r() * 4 | 0)) % 4]);
+            if (k % 2) leaf(q[0], q[1], up - side * (0.8 + r() * 0.5), 20 + r() * 12, GREENS[(k + 2) % 4]);
+            if (k % 5 === 0) {                                               // a little curling tendril
+                c.strokeStyle = "#3a6a34"; c.lineWidth = 1.4; c.beginPath();
+                c.moveTo(q[0], q[1]); c.quadraticCurveTo(q[0] + side * 18, q[1] - 8, q[0] + side * 12, q[1] - 20); c.stroke();
+            }
+        });
+    };
+    for (let i = 0; i < 9; i++) {                                            // hanging ivy and climbers on the left face
+        const y = 1600 + i * 80 + r() * 40, x = edgeL(y) + 14 + r() * 40;
+        vine(x, y + 60 + r() * 100, 200 + r() * 160, i % 2 ? 1 : -1, r() * 6);
     }
-    treeSprite(c, "palms", 1190, 1870, 200);
-    treeSprite(c, "pomA", 2070, 1872, 190, true);
-    treeSprite(c, "pomB", 1960, 1874, 150);
-    const mist = c.createLinearGradient(0, 1760, 0, 1900);
-    mist.addColorStop(0, "rgba(250,232,180,0)"); mist.addColorStop(1, "rgba(250,232,180,0.5)");
-    c.fillStyle = mist; c.fillRect(1100, 1760, 1050, 160);
+    for (let i = 0; i < 9; i++) {                                            // ...and the right face
+        const y = 1600 + i * 80 + r() * 40, x = 1996 - 14 - r() * 40;
+        vine(x, y + 60 + r() * 100, 200 + r() * 160, i % 2 ? -1 : 1, r() * 6);
+    }
+    for (let i = 0; i < 6; i++) {                                            // a few thick ones climbing the middle of the shaft
+        vine(1330 + r() * 560, 2400 + r() * 150, 260 + r() * 220, r() < 0.5 ? 1 : -1, r() * 6);
+    }
 }
 
 function drawMarginPlantsProc(c) {
