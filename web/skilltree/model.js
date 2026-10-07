@@ -35,10 +35,21 @@ function rolePrefixes(text, names) {
     return [...new Set(out)];
 }
 
-export function build(source) {
+// `privateNotes` is content/private/private-notes.md when available (owner only):
+// its fields are merged into the EUs with the same ID.
+export function build(source, privateNotes = '') {
     const raw = parse(source);
     const issues = [...raw.issues];
     const report = (kind, msg) => issues.push({ kind, msg });
+
+    if (privateNotes) {
+        const byId = new Map(raw.eus.map(e => [e.id, e]));
+        for (const note of parse(privateNotes).eus) {
+            const eu = byId.get(note.id);
+            if (!eu) { report('missing', `Private notes for ${note.id}, which is not in the public file`); continue; }
+            for (const [k, v] of Object.entries(note.fields)) (eu.fields[k] ||= []).push(...v);
+        }
+    }
 
     // ---- taxonomy, roles ---------------------------------------------------
     const taxonomy = rowsOf(findTable(raw, 'Competency taxonomy')).map(r => ({

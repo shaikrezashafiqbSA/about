@@ -2,6 +2,7 @@
 
 Revision 1: Oct 5, 2026
 Revision 2: Oct 7, 2026. Skill tree extensions added (see "Skill tree use" below). File renamed to my-skills-tree.md.
+Revision 3: Oct 7, 2026. File made public. Private material moved to content/private/private-notes.md (see "Usage rules").
 
 ## **How to use this file**
 
@@ -14,6 +15,7 @@ Revision 2: Oct 7, 2026. Skill tree extensions added (see "Skill tree use" below
 * New experiences surfaced by the job-match pipeline are appended as new EU entries. Do not overwrite existing entries; supersede them.
 * Where an EU carries a "Claim boundary" note, the boundary is binding. It records the honest limit of the claim.
 * An EU ID is never reused or renumbered. A moved or retired unit keeps its ID, so older tailored resumes still resolve to the right unit.
+* This file is public. Contact details, Interview notes, Claim boundaries, Tailoring notes, reasons for leaving and the Tailored Resume Structure live in content/private/private-notes.md (gitignored, never published), under the same EU IDs and headings. Read both files when tailoring. Never add private material to this file.
 
 ### **Evidence unit fields**
 
@@ -50,10 +52,7 @@ This file also feeds the skill tree on the GitHub about page (web/skills.html). 
 | :---- | :---- |
 | Name | Shaik Reza Shafiq |
 | Citizenship | Singapore Citizen |
-| Phone | Not published |
-| Email | shaik.reza.shafiq@gmail.com |
 | LinkedIn | https://www.linkedin.com/in/shaikrezashafiq/ |
-| CSP | https://www.myskillsfuture.gov.sg/csp/public/profile/nz4guushoc91db (only when required by the job posting) |
 | GitHub main page | https://shaikrezashafiqbsa.github.io/about/ (links to projects such as the dua app below, other projects to be posted, and this master resume) |
 | Dua app | https://shaikrezashafiqbsa.github.io/steps-of-muhammad/ |
 | Location | Singapore |
@@ -66,34 +65,6 @@ This file also feeds the skill tree on the GitHub about page (web/skills.html). 
 | V-AUTO | Automation & Digital Adoption Lead · Change Management · GenAI/RPA Workflow Automation · Technology Support | Automation builder who also leads adoption. |
 | V-SUPPORT | Automation & Digital Adoption Lead · RPA · GenAI Low-Code Solutions · Technology Support · Change Management | Technology support, training delivery, low-code solutions. Contains the most granular NHB support and training facts. |
 | V-OPS | Operations & Analytics Manager · Situational Monitoring · Case and Incident Tracking · Trend Analysis · Management Reporting | Operations monitoring, case management, reporting. Contains unique NHB ops facts, Alpha Stone incident facts, and National Service. |
-
-### **Tailored Resume Structure**
-
-Use these headings, in this order, with the organisation's name inserted in full and in capitals:
-
-1. Name, then a single contact line, then a positioning tagline.
-2. WHO I AM & THE VALUE I BRING TO [ORGANISATION NAME]
-3. SKILLS AND CORE COMPETENCIES
-4. PROFESSIONAL EXPERIENCE
-5. EDUCATION
-6. CERTIFICATIONS AND PROFESSIONAL DEVELOPMENT
-7. COMMUNITY ENGAGEMENT
-8. LANGUAGES
-
-Section 2 must open with a short paragraph, then map the candidate against the JD's own work-area headings using the JD's section names. Concise but impactful enough for interviewers to glance through during the interview for a lasting impression.
-
-Section 4 must include scope notes for each job after dates - this is to help interviewer understand why my job stints are short and also my scope there. The scope notes can be reframed to follow JD narrative and cut down on words if need be. But the “why i left” reasons must always be there. Eg:
-
-1. NHB: *Recruited as change and transformation lead to reverse a stalled enterprise Digital Asset Management System (DAMS) rollout. The system was technically live but had plateaued in human adoption. Remit: drive utilisation to target, automate the adoption measurement architecture, and establish governance and knowledge foundations designed to outlast the contract. Reason for leaving: Contract completion having exceeded target outcomes.*
-2. EkkBaz AI: *EkkBaz AI is the consultancy arm built to transform EkkBaz, a digital FMCG procurement company. Delivered 5 client engagements to workflow-design and POC or MVP stage across government, financial and engineering sectors, and deployed the validated internal build into live operations at EkkBaz. Reason for leaving: Contract completion with target outcomes met. Demo: [https://ekkbaz.ai/#demo](https://ekkbaz.ai/#demo)*
-3. Call Levels Pte Ltd: *Joined under a Quant Developer mandate executing the full SDLC on the firm's trading systems. Scope evolved into AI-enablement and process-automation delivery across public, government-linked and consumer clients. Progressed from independent contributor to leading architecture and engineering design across projects. Reason for leaving: project completion and company restructure and pivot.*
-4. Alpha Stone Capital Pte Ltd: *Joined under a quant developer mandate to build trading systems to generate PNL for company. Tech lead within a 5-person quant and trading team. Reason for leaving: company liquidated.*
-5. GIC: *Systematic Investment Group. Reason for leaving: contract completion.*
-6. CIMB CGS: Contract completion. Left to pursue further studies, same for Singtel.
-
-Maximum three pages. Trim order when over length: Languages, Community Engagement, then the lowest-relevance bullets in the oldest roles first.
-
-Do not use the master resume's Guiding Principle line in any tailored resume.
 
 ## **Competency taxonomy**
 
@@ -180,8 +151,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** 15 divisions; Teams groups; division org charts; asset upload-and-publish plans.
 * **Metrics:** Stalled divisions: 0 to 25% progress to completion | Never-onboarded divisions: onboarded to completion
 * **Canonical:** Recovered divisions stalled at 0 to 25% progress, and divisions never onboarded, to completion. Issued each division a specific upload-and-publish plan naming feasible assets from its own business (branding, building facades, exhibitions, art pieces), mapped responsible officers from division org charts, and segregated tasks by asset owner. Where asset owners were unresponsive, followed up in person or through scheduled one-to-one sessions aligning DAMS value to their work. Scheduled hands-on upload sessions, created dedicated Teams groups to sustain momentum through operational disruptions, built onboarding chains from scratch for divisions with no nominated admin, and identified alternative POCs for non-responsive stakeholders. Partnered with SCD on the Annual Report x DAMS initiative, replacing SharePoint and Google Drive methods with DAMS for annual report asset workflows.
-* **Interview notes (starting state):** At programme start, only 3 of 15 divisions were on track: SPDM (Strategic Policy and Data Management, the sponsoring division), NMS (National Museum of Singapore, consistently uploading and publishing), and SCD (Strategic Communications, partnering on branding and marketing assets). 7 divisions had never responded to the prior team's onboarding callouts. 5 of the 8 initially onboarded divisions were lagging on the asset upload-and-publish plans they had committed to before my tenure.
-* **Interview notes (arithmetic):** 3 of 15 on track at start; all 15 active at close (EU-NHB-01). 12 divisions were moved from stalled or never-onboarded to active.
 
 #### **EU-NHB-04 · On-site onboarding across museum sites (V-SUPPORT only)**
 
@@ -199,7 +168,6 @@ All variants state approximately 6 years.
 * **Metrics:** Direct resolution rate: about 90% | Coverage: all 15 divisions
 * **Canonical:** Served as first point of contact for officers using DAMS, resolving system errors and usage issues directly as Level 1 and Level 2 support and escalating unresolved defects to the vendor as Level 3. Tracked and managed user queries through GatherSG case management, logging each case against the named requesting officer with resolution timelines and follow-up actions, and giving the senior manager continuous visibility of open cases.
 * **Variants:** V-AUTO adds "maintaining continuity of platform access across all 15 divisions." V-OPS titles it "Case Management System Ownership."
-* **Claim boundary (volume):** approximately 20 cases tracked through GatherSG across the contract; about 90% resolved directly. 2 cases required long-term fixes routed through change requests and were tracked to handover rather than personal closure. Volume is modest: lead with the tracking discipline and resolution rate; state the count only if asked.
 
 #### **EU-NHB-06 · Priority triage by stakeholder profile (V-OPS only)**
 
@@ -248,8 +216,6 @@ All variants state approximately 6 years.
 * **Metrics:** Monthly computation: about 2 days to about 2 hours | Time saved: roughly 16 hours per month | Source systems consolidated: 3
 * **Canonical:** Automated Adoption Index reporting by migrating it from manual Excel tabulation to an analytics.gov pipeline in Python and Jupyter, consolidating AEM usage reports, CloudWatch metrics and CAMS user data into a modular, reproducible monthly reporting artefact, with in-file methodology documentation and anomaly commentary for successor continuity.
 * **Variants:** V-OPS splits out "Multi-Source Data Consolidation and Verification" (three separate source systems with different owners and formats, cross-referenced before figures reached management). V-AUTO adds a summary bullet: removed manual tabulation as the basis for ministry-reportable KPI tracking.
-* **Interview notes (effort saved and validation):** The fully manual Excel method took about 2 days per monthly computation, with formulas re-edited for each new data row; the Author instance was the heavier of the two because it processed raw data from DAMS, CloudWatch and CAMS. After migration, computation took at most 2 hours, saving roughly 16 hours per month, redirected from data entry to strategy work. Validated by direct comparison: the first 3 months of tenure ran fully on Excel at 2 to 3 days per cycle; the final 3 months ran on the analytics.gov pipeline at 2 hours or less.
-* **Claim boundary:** The pipeline is a hybrid automation. The Publisher instance retained one manual data-entry step transferring AEM analytics into the workbook, because there was no API. A change request for an API was argued against, because its cost exceeded the time needed for the data entry. Approved claims: "about 2 days to about 2 hours" and "roughly 16 hours per month saved." Banned form: full automation of both instances.
 
 #### **EU-NHB-13 · Daily situational monitoring (V-OPS only)**
 
@@ -268,14 +234,12 @@ All variants state approximately 6 years.
 * **Metrics:** Survey response rate: 72.8% | Training completion: 100% (target 100%, met) | Satisfaction: 73.3% (target 80%) | Respondents reporting time savings: 61% | KPI horizon: 3 years
 * **Canonical:** Directed 3-year KPI baselines and methodologies for ministry reporting. Executed the DAMS Annual Survey via FormSG, achieving a 72.8% response rate through a structured chaser and incentive campaign, and established ministry-reportable organisational baselines across time savings (61% of respondents reporting savings), training completion (hit the 100% target: all DAMS-using officers trained to use the full ability and extract full value of the system) and satisfaction (73.3% against an 80% target), pairing every missed target with proposed mitigations before leadership asked.
 * **Year 1 targets:** satisfaction 80%, training completion 100%, and efficiency gains of at least 1 hour across 61% of respondents. Programme architected for Year 2 KPIs beyond tenure.
-* **Claim boundary:** targets and achievements must not be merged.
 
 #### **EU-NHB-16 · Tableau dashboard delivery**
 
 * **Tags:** MAR, RSD
 * **Scale and tools:** Tableau; museum engagement data.
 * **Canonical:** Gathered requirements from stakeholders and division officers for museum engagement Tableau dashboards and delivered the dashboard construction directly. Dashboard users, comprising SPDM strategy and policy officers, the assistant manager and the assistant director, reported by email that the dashboards made the data clearer to visualise and interpret.
-* **Claim boundary:** Feedback was qualitative, gathered through direct email outreach. Banned form: any measured engagement increase.
 
 #### **EU-NHB-17 · Analytical summaries and management briefings (V-OPS only)**
 
@@ -333,7 +297,6 @@ All variants state approximately 6 years.
 * **Metrics:** Training videos published: 12 | Views: approximately 100 to 200 per video
 * **Canonical:** Produced and published 12 video walkthroughs on SharePoint for organisation-wide access, each drawing approximately 100 to 200 views by contract conclusion. Categorised self-produced and vendor-produced videos into e-learning modules organised by both feature (for example metadata editing) and use case (for example updating the Annual Report using DAMS), so users could locate content matching their specific issue. Received feedback that the videos were well structured and presented in a carousel where users select the category and type of training they need.
 * **Wording variant (product and innovation JDs; covers EU-NHB-24, 25, 26):** "Produced knowledge assets including 12 training videos, GIF quick-guides, slide decks, user guides and categorised e-learning modules." View-count rules below still apply.
-* **Claim boundary:** All video view figures are candidate estimates, not pulled analytics. Practical-task videos drew about 200 views each and feature-explanation videos about 100 each. The implied total is roughly 1,200 to 2,400 views across 12 videos. Approved wordings, in descending safety: (a) "produced 12 training videos, each drawing approximately 100 to 200 views"; (b) "produced 12 training videos drawing over 1,000 views in total," which uses the conservative floor of 12 by 100. Banned form: any specific total such as "1,800 views."
 
 #### **EU-NHB-25 · SharePoint adoption platform redesign (V-SUPPORT only)**
 
@@ -341,8 +304,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** SharePoint edit and publishing features; EDM campaigns.
 * **Metrics:** Site page views: 50 to 9,000+ over 12 months
 * **Canonical:** Redesigned the DAMS SharePoint site using SharePoint edit and publishing features, embedding instructional videos, animated GIF quick-guides, and feedback and satisfaction forms for officers to complete. Site total page views grew from 50 to over 9,000 across the 12-month tenure, driven by the redesign and by EDM campaigns to all DAMS officers announcing new training material.
-* **Claim boundary:** the 9,000 figure is confirmed.
-* **Interview notes (arithmetic):** roughly 9,000 views over 12 months across about 95 active officers, or about 95 views per officer.
 
 #### **EU-NHB-26 · User enablement materials portfolio**
 
@@ -373,14 +334,12 @@ All variants state approximately 6 years.
 * **Metrics:** Production RAG chatbots: 2 (Taxonomy, DAMS)
 * **Canonical:** Built two production RAG chatbots on Singapore government low-code GenAI platforms (AIBots, Pair): a Taxonomy AI Chatbot supporting information classification for the Heritage Discovery function, and an enterprise DAMS Chatbot mounted on curated technical specification documents to streamline internal team workflows. Curated and trimmed the source retrieval corpus and authored governance and handover documentation covering data provenance, update ownership, and the escalation path for queries the chatbot could not resolve or risked answering incorrectly.
 * **Variants:** V-SUPPORT specifies delivery "through configuration interfaces rather than application code," which positions this as low-code. Choose framing per JD.
-* **Claim boundary:** The chatbots served the internal project function as working and succession tools for the author and the incoming project manager, not the wider NHB officer base. "Production" means live under governance constraints for internal department use. Banned forms: organisation-wide rollout, query volumes, user counts. Usage tracking sits beyond the tenure.
 
 #### **EU-NHB-30 · Automation platform evaluation with a documented no (V-SUPPORT only)**
 
 * **Tags:** AAE, GRC, RSD
 * **Scale and tools:** Microsoft Power Automate, Power Apps.
 * **Canonical:** Evaluated Microsoft Power Automate and Power Apps as the delivery route for automating a manual point-and-click download workflow. Assessed the option against public-sector governance protocols and recommended against deployment, on the basis that screen-driven RPA on government-issued laptops did not meet those protocols. Documented the finding to prevent repeat evaluation effort.
-* **Claim boundary:** This is the only substantiation for Power Platform claims. Approved claim: "evaluation and governance advisory." Banned form: any hands-on build claim.
 * **Relationship:** with EU-EKK-12 and EU-AS-02, part of a three-instance pattern of correctly declining to build.
 * **Tree links:** link EU-EKK-12, EU-AS-02
 
@@ -389,7 +348,6 @@ All variants state approximately 6 years.
 * **Tags:** AAE, RSD
 * **Scale and tools:** Microsoft Teams, email, AIBot, SharePoint-hosted Form.gov.sg form.
 * **Canonical:** Designed a cross-platform automation linking Microsoft Teams, email and an AIBot so that officer submissions on a SharePoint-hosted Form.gov.sg form would route automatically to a Teams notification trigger. Reached design and evaluation stage.
-* **Claim boundary:** design and evaluation stage only. Banned form: any deployment claim.
 
 ### **NHB: Vendor and commercial management**
 
@@ -427,8 +385,6 @@ All variants state approximately 6 years.
 
 * **Tags:** VPM
 * **Canonical:** Participated in costing and budget review meetings with the vendor and internal stakeholders, covering costing timelines, budget allocation and licence utilisation. Commercial accountability sat with the internal project sponsor.
-* **Claim boundary:** keep the accountability sentence. It is the honesty boundary for budget claims.
-* **Claim boundary:** do not state a budget size.
 
 #### **EU-NHB-38 · Change request backlog ownership**
 
@@ -436,7 +392,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** Jira; sources: UAT cycles (EU-NHB-08) and support cases (EU-NHB-05).
 * **Canonical:** Owned the queue of user-raised feature and change requests arising from UAT and support, and sequenced that queue to vendor developers in Jira.
 * **Relationship:** EU-NHB-35 covers the priority matrix and the must-do, should-do, could-do classification. EU-NHB-38 covers ownership of the queue itself and the sequencing of work to the vendor. Use together for a full backlog-ownership claim; do not present them as two separate achievements.
-* **Claim boundary:** do not state a backlog volume.
 * **Tree links:** merge EU-NHB-35
 
 #### **EU-NHB-39 · Budget influence through change request scoping**
@@ -444,13 +399,11 @@ All variants state approximately 6 years.
 * **Tags:** VPM, DPM, SCM
 * **Metrics:** Feature deferred: 3D preview, needed by 1 of 15 divisions
 * **Canonical:** Influenced budgeting by scoping change requests to business-critical items. Advanced the SingPass external-partner feature and the DAMS asset embed-link feature; deferred a 3D preview feature needed by only 1 of 15 divisions, after consulting division heads and proposing the deferral at Director level.
-* **Claim boundary:** influence, not ownership. Commercial accountability stayed with the sponsor (EU-NHB-37 stands).
 
 #### **EU-NHB-40 · Per-division content migration onboarding**
 
 * **Tags:** DPM, TEC, RSD
 * **Canonical:** Directed per-division content migration onboarding: located paper and local-drive records through structured interviews with asset owners, defined upload-and-publish plans, and delivered guided documentation integrating officers' local, Google Drive, OneDrive and SharePoint drives with DAMS workflows.
-* **Claim boundary:** officer-enablement integration. Approved claim: guided documentation and workflow integration. Banned form: any API or middleware integration claim.
 
 #### **EU-NHB-41 · Steering committee and delivery tracking**
 
@@ -474,7 +427,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** DAMS Power Users channel; 90+ trained NHB officers.
 * **Metrics:** Community channel: 90+ trained officers
 * **Canonical:** Managed and sustained the DAMS Power Users community channel of 90+ trained officers, keeping the community active through regular posts: system tidbits, new feature and status updates, instructional materials (SharePoint videos, GIF quick-guides), surveys, and announcements of workshops, peer-to-peer sessions and clinics.
-* **Claim boundary:** engagement described qualitatively (posting cadence, channel activity). No measured engagement or growth figure; do not attach one.
 * **Relationship:** pairs with EU-NHB-25 (SharePoint hub and EDM campaigns). EU-NHB-25 is the content platform and its 50-to-9,000 growth; EU-NHB-43 is the live community channel. Append "EDM blasts on email publicising new features and training schedules" to EU-NHB-25's canonical as a distribution-channel note, not a new EU.
 * **Tree links:** merge EU-NHB-25
 
@@ -508,7 +460,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** end-to-end procurement workflow; database search, ITQ retrieval, requisition email generation.
 * **Canonical:** Drove proof-of-concept delivery for Changi Airport Group's procurement team, mapping end-to-end procurement workflows and engineering an AI agent framework that automated core procurement steps (database search, ITQ retrieval, requisition email generation) to validate the system's financial and operational value proposition.
 * **Variants:** V-AUTO adds "functions as RPA" framing. V-PM calls it an "AI copilot/agent framework."
-* **Claim boundary:** No CAG-specific quantified outcome. The hours-to-minutes figure belongs to EU-EKK-04, not to CAG; do not transfer it. The CAG POC was delivered under an open tender and ran on EkkBaz AI resources.
 * **Outcome:** The tender was not won, but EkkBaz secured new technologies that were embedded into the parent company and its portfolio for other clients.
 
 #### **EU-EKK-04 · Internal AI capability building**
@@ -599,13 +550,11 @@ All variants state approximately 6 years.
 
 * **Tags:** AAE
 * **Canonical:** Implemented the pgvector extension for PostgreSQL in place of specialised vector databases (Pinecone, Weaviate), storing inventory and procurement item text descriptions as embeddings to surface alternative or fallback suppliers with matching specifications. Combined relational metadata with vector embeddings to handle inconsistent supplier taxonomy and item shorthand.
-* **Claim boundary:** unquantified; do not attach a retrieval-quality or time-saving figure.
 
 #### **EU-EKK-18 · Multi-step agentic procurement workflow**
 
 * **Tags:** AAE, RSD
 * **Canonical:** Developed stateful, multi-step agentic workflows on LangGraph using frontier models (ChatGPT) for FMCG procurement cycles. A front-end agent interprets customer supply top-up queries, autonomously retrieves and contextually analyses historical ITQ and TTQ documents, and executes tool calls across the cycle.
-* **Claim boundary:** Default label: "multi-step agentic workflow." Alternative labels (ReAct, Plan-and-Execute) require user confirmation before use.
 * **Relationship:** strengthens EU-EKK-02 and EU-EKK-09.
 * **Tree links:** link EU-EKK-02, EU-EKK-09
 
@@ -615,7 +564,6 @@ All variants state approximately 6 years.
 | :---- | :---- |
 | Dates | Sep 2022 to Jul 2024 |
 | Title | Quantitative Developer, Data Scientist |
-| Reason for leaving | Project completion and company restructuring |
 
 **Role context (canonical).** Joined under a Quant Developer mandate executing the full SDLC on the firm's trading systems; scope evolved into Data Scientist: AI-enablement and process-automation delivery across public, government-linked and consumer clients. Progressed from independent contributor to leading architecture and engineering design across projects.
 
@@ -650,8 +598,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** Malaysian government-linked travel client; digitisation pipeline: physical archives, scanning, OCR, structured sheets; cloud storage (AWS S3, Google Cloud Drive); RAG MVP; REST API with streaming responses.
 * **Metrics:** Itinerary turnaround: about 4 days to about 2 hours (48x)
 * **Canonical:** Embedded within a government-linked travel client as forward-deployed engineer: conducted a full data audit and delivered a data-readiness report, which found paper documents and local-drive records. Migrated the client's paper documents and local-drive records to cloud storage (AWS S3, Google Cloud Drive). Designed the digitisation pipeline from physical archives through scanning and OCR to structured sheets, and delivered a RAG MVP, automating a manual itinerary workflow and reducing turnaround from approximately 4 days to approximately 2 hours, a 48x gain. Used a REST API with streaming responses for pure language output.
-* **Claim boundary (three separate numbers):** "One week to one day" is a target set at scoping for total processing lead time. "Four days to two hours, a 48x gain" is the achieved result on the itinerary workflow. The "50% automation" figure is a target, not a measured outcome. Never combine these three numbers or present them as one result.
-* **Interview notes:** The candidate scoped, priced and delivered a SGD 10,000 data-readiness assessment as phase one, then delivered a four-month roadmap to completion, including rollout, UAT and handover. This is the same client as EU-CL-06.
 
 #### **EU-CL-06 · Supplier-side contracting and KPI tracking**
 
@@ -669,7 +615,6 @@ All variants state approximately 6 years.
 * **Tags:** AAE, RSD
 * **Scale and tools:** RAG chatbot over structured nutritional database; dietary-type optimisation (max-protein, min-calorie, halal); inventory management scoping.
 * **Canonical:** Designed and pitched RAG-based products during the 2022 to 2023 GenAI wave, including a nutrition-optimising food recommendation chatbot pitched to NTUC FairPrice, built over a structured nutritional database with dietary-type optimisation, automating a previously manual customer-to-database matching process. Separately conducted workflow mapping and AI solution scoping for NTUC FairPrice inventory management processes, designing an automated AI recommendation system delivered to POC stage.
-* **Claim boundary:** POC stage only. Banned form: any production deployment claim.
 
 #### **EU-CL-09 · Expectation management**
 
@@ -680,13 +625,11 @@ All variants state approximately 6 years.
 
 * **Tags:** AAE, GRC
 * **Canonical:** Provisioned and configured AWS EC2 and S3 via the AWS console for the Malaysian client migration, with cost-minimising resource allocation. Managed IAM groups and managed policies under least privilege; configured Security Groups and inbound port rules for frontend and backend services.
-* **Claim boundary:** console-based. Banned form: any infrastructure-as-code claim.
 
 #### **EU-CL-12 · Additional GenAI POCs**
 
 * **Tags:** AAE, RSD
 * **Canonical:** Built GenAI POCs at Call Levels beyond EU-CL-05 and EU-CL-08: procurement RAG pitches for NTUC and the Malaysian GLC, and image-analysis shopper profiling scoped for CapitaLand.
-* **Claim boundary:** POC and pitch stage only; no production or secured contract.
 
 #### **EU-CL-13 · Vector store delivery**
 
@@ -701,7 +644,6 @@ All variants state approximately 6 years.
 | :---- | :---- |
 | Dates | Sep 2021 to Aug 2022 |
 | Title | Quantitative Developer |
-| Reason for leaving | Company liquidated following restructuring |
 
 **Role context (canonical).** Joined under a quantitative developer and researcher mandate to develop profit-making trading strategies, running the full SDLC from scratch under the leadership of the parent company, a crypto trading platform called Finxflo.
 
@@ -752,8 +694,6 @@ All variants state approximately 6 years.
 * **Tags:** DPM, SCM, PAI
 * **Metrics:** Development cycles: 2x faster
 * **Canonical:** Partnered with executive leadership to translate high-level strategic objectives into structured implementation plans, achieving 2x faster development cycles, and developed monitoring and evaluation frameworks guiding portfolio allocation decisions.
-* **Interview notes (basis of the 2x claim):** Backtesting was previously monolithic. Each new strategy carried its own data pipeline, backtesting engine and PnL reporting inside one codebase. Modularised the stack into separate ETL, backtesting engine, strategy configuration and detailed PnL charting modules. This allowed hundreds of strategy variants (trend, scalping, reversal, market volume and others) to be swapped onto one reliable engine with standardised PnL reporting. The strategy ideation-to-report cycle fell from 1 to 3 days, sometimes a week, to about one hour. The remaining constraints became strategy creativity, data sources and computation.
-* **Claim boundary:** keep 2x as the resume claim, since it refers to overall development cycles. The module-level gain was far larger and is interview material.
 
 #### **EU-AS-08 · Phased delivery of a trader's strategy automation**
 
@@ -790,7 +730,6 @@ All variants state approximately 6 years.
 | Dates | Oct 2020 to Jul 2021 |
 | Title | Quantitative Researcher |
 | Team | Systematic Investment Group |
-| Reason for leaving | Contract completion |
 
 #### **EU-GIC-01 · Research-to-production translation**
 
@@ -820,7 +759,6 @@ All variants state approximately 6 years.
 * **Scale and tools:** Jupyter template; Markdown documentation of in-house libraries; 48-hour weekend hackathon; about 8 of 10 quantitative researchers.
 * **Metrics:** Researchers engaged: about 8 of 10 | Format: 48-hour weekend hackathon
 * **Canonical:** Identified inconsistent backtesting practices across research teams and co-developed a standardised end-to-end model-testing template covering data ingestion, transformation, model testing and analytics plotting, with full Markdown documentation of in-house libraries, improving data consistency and evaluation comparability across trading and research teams.
-* **Interview notes:** The standardisation work was a 48-hour weekend hackathon that the candidate organised. Approximately 8 of 10 quantitative researchers participated and co-built the shared template. The template was adopted by those researchers and further improved after the candidate's tenure ended.
 
 #### **EU-GIC-05 · Executive synthesis**
 
@@ -846,7 +784,6 @@ These accomplishments recur across more than one employer. Cite the EU once and 
 * **Roles:** Alpha Stone Capital, Call Levels.
 * **Scale and tools:** Miro feature queue; three-tier service levels: immediate within 2 days, short term within the week, long term within 2 weeks.
 * **Canonical:** Managed a feature queue in Miro under three delivery tiers (immediate within 2 days, short term within the week, long term within 2 weeks) and handled releases while also running DevOps for the stack.
-* **Claim boundary:** claim this at Alpha Stone and Call Levels only. Do not extend it to GIC unless releases genuinely applied to the research role there.
 * **Relationship:** the same competency as EU-NHB-38, applied at NHB to a vendor-delivered platform. Together these give backlog and release management across three employers.
 * **Tree links:** link EU-NHB-38
 
@@ -855,7 +792,6 @@ These accomplishments recur across more than one employer. Cite the EU once and 
 * **Tags:** AAE
 * **Roles:** Call Levels, EkkBaz AI.
 * **Canonical:** Containerised microservices and applications with Docker for local-to-cloud environment parity, streamlining testing and deployment to cloud services and VPS instances.
-* **Claim boundary:** no Kubernetes cluster deployment; claim container lifecycles and isolation only.
 
 #### **EU-XR-04 · AI-assisted development with human review**
 
@@ -871,14 +807,11 @@ These accomplishments recur across more than one employer. Cite the EU once and 
 | Rank | 3rd Sergeant |
 | Service | 9 February 2011 to 8 December 2012 |
 
-* **Timeline caution:** the stated sub-period durations (6 months guardroom command, 3 months instructor, plus rotational standby) do not sum to the full 22-month service. Confirm the full timeline before using sub-period durations in writing; the roles themselves are confirmed.
-* **Tailoring note:** NS content appeared only in V-OPS. Use it for operations, security, duty-roster or readiness-heavy roles, and possibly law-related roles; omit elsewhere.
 
 #### **EU-NS-01 · Rotational duty and standby operations**
 
 * **Tags:** TSO, GRC
 * **Canonical:** Served within the L2 standby force (2nd People's Defence Force, 2 PDF) under rotational shift arrangements, stationed at MINDEF HQ for standby duty, providing operational oversight during assigned duty periods and maintaining standby force continuity across shift handovers.
-* **Claim boundary:** subject to the timeline caution above.
 
 #### **EU-NS-02 · Guardroom command and camp security operations**
 
@@ -889,7 +822,6 @@ These accomplishments recur across more than one employer. Cite the EU once and 
 
 * **Tags:** GRC
 * **Canonical:** Returned on a weekend to support an internal camp investigation into a soldier absent with live ammunition, conducting CCTV review for the investigation. Separately enforced formal discipline by charging a sentry for failure to comply with orders, resulting in detention.
-* **Tailoring note:** sensitive content. Use only where a JD explicitly values enforcement or investigative experience, and phrase factually without embellishment.
 
 #### **EU-NS-04 · Instructor and platoon sergeant, Security Troopers**
 
@@ -987,7 +919,6 @@ These are legacy entries, carried as single units. Expand them to full EU fields
 
 **Degree project work (both degrees).** Project work across the MSc and BSc covered end-to-end quantitative trading system builds: data pipelines, machine learning decision algorithms, broker integration, and deployed dashboards.
 
-* **Tailoring note:** V-OPS and V-PM strip the coursework lines entirely. Include coursework only when the JD is technical.
 
 ### **Certifications and professional development**
 
@@ -999,7 +930,6 @@ These are legacy entries, carried as single units. Expand them to full EU fields
 | PMP | n/a | Want to enroll - Not enrolled. Saving for the exam; primarily seeking employer sponsorship | Write "Pursuing." Where the JD values PMP: "Preparing for Project Management Professional (PMP) certification; seeking employer sponsorship support." |
 | Prosci ADKAR | n/a | Want to enroll - Not enrolled. Saving for the exam; primarily seeking employer sponsorship | Confirm before the next submission. If not enrolled, apply the same wording rule as PMP. The ADKAR methodology claim is safe regardless, because EU-NHB-18 substantiates applied use. |
 
-* **PMP interview line:** "I am not yet enrolled. I am budgeting for the exam and I am looking for an employer who will sponsor it, because I intend to complete it in role."
 * **Why the PMP rule exists:** an interviewer will ask for the exam date if the resume says "Pursuing."
 
 ### **Languages**
