@@ -34,7 +34,7 @@ Role prefixes: NHB (National Heritage Board), EKK (EkkBaz AI), CL (Call Levels),
 
 ### **Skill tree use**
 
-This file also feeds the skill tree on the GitHub about page (render.html). The tree reads the same evidence units. Nothing in this subsection changes the tailoring rules above.
+This file also feeds the skill tree on the GitHub about page (web/skills.html). The tree reads the same evidence units. Nothing in this subsection changes the tailoring rules above.
 
 * **Metrics:** optional EU field, placed after Scale and tools (or after Tags when Scale and tools is absent). Holds the unit's quantified impact as approved display strings, separated by " | ". Every figure is drawn from the unit's Canonical, Scale and tools, Outcome or approved Claim boundary wording, never from Interview notes. Claim boundaries apply to Metrics exactly as they apply to Canonical. Tailoring may use Metrics as written.
 * **Tree links:** optional EU field, placed last. Machine-readable form of the Relationship field. `merge EU-...` means the units render as one node and are never separate achievements. `link EU-...` means the tree draws a synergy line between them. Tree-only; never print on a resume.
@@ -50,7 +50,7 @@ This file also feeds the skill tree on the GitHub about page (render.html). The 
 | :---- | :---- |
 | Name | Shaik Reza Shafiq |
 | Citizenship | Singapore Citizen |
-| Phone | +65 [redacted] |
+| Phone | Not published |
 | Email | shaik.reza.shafiq@gmail.com |
 | LinkedIn | https://www.linkedin.com/in/shaikrezashafiq/ |
 | CSP | https://www.myskillsfuture.gov.sg/csp/public/profile/nz4guushoc91db (only when required by the job posting) |
@@ -1066,7 +1066,7 @@ Every skill claim must trace to at least one evidence unit. If a skill has no EU
 
 ## **Skill tree configuration**
 
-Tree-only data for render.html. Not resume content. Ignore this section when tailoring.
+Tree-only data for web/skills.html. Not resume content. Ignore this section when tailoring.
 
 ### **Rendering rules**
 

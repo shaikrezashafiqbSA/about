@@ -5,7 +5,10 @@
 import { build, pathState, euInClass, search, synergiesOf, monthLabel, logReport } from './model.js';
 import { drawPortrait } from '../sanctuary/art.js';
 
+// The public copy is generated from the private master (dev/publish-skills.ps1).
+// Owner mode reads the master when it is there, i.e. only on the owner's machine.
 const SRC = '../content/my-skills-tree.md';
+const MASTER = '../content/private/my-skills-tree.md';
 const NS = 'http://www.w3.org/2000/svg';
 const OWNER = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) || new URLSearchParams(location.search).has('edit');
 
@@ -370,16 +373,19 @@ addEventListener('resize', applyView);
 // ---------------------------------------------------------------- boot
 
 try {
-    const res = await fetch(SRC, { cache: 'no-store' });
+    let res = OWNER ? await fetch(MASTER, { cache: 'no-store' }).catch(() => null) : null;
+    const fromMaster = !!res?.ok;
+    if (!fromMaster) res = await fetch(SRC, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     model = build(await res.text());
+    model.source = fromMaster ? 'private master' : 'public copy';
     logReport(model);
     cls = model.classes[0];
     layout();
     renderClasses();
     draw();
     fit();
-    $('status').textContent = `${model.skills.size} skills · ${model.eus.size} evidence units · ${model.mergeGroups.length} merged · ${model.unassigned.length} unassigned`;
+    $('status').textContent = `${model.skills.size} skills · ${model.eus.size} evidence units · ${model.mergeGroups.length} merged · ${model.unassigned.length} unassigned${OWNER ? ` · reading the ${model.source}` : ''}`;
     if (OWNER) { $('report-btn').hidden = false; $('report-btn').addEventListener('click', showReport); }
 } catch (err) {
     $('status').textContent = location.protocol === 'file:'

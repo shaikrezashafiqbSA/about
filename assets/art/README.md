@@ -16,4 +16,3 @@ drawing stands in.
 | `grass.jpg` | Painted meadow | The far hills the armies march on |
 | `curtain_l.png`, `curtain_r.png` | The ornate drapes with hanging lanterns | Framing the corners of the screen |
 
-`bg-1.jpg` / `bg-2.jpg` in the parent folder are older and unused.

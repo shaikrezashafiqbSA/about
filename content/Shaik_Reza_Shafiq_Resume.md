@@ -1,6 +1,6 @@
 # SHAIK REZA SHAFIQ
 
-Singapore Citizen  |  \+65 [redacted]  |  shaik.reza.shafiq@gmail.com  |  [LinkedIn](https://www.linkedin.com/in/shaikrezashafiq/) | [CSP](https://www.myskillsfuture.gov.sg/csp/public/profile/nz4guushoc91db)
+Singapore Citizen  |  shaik.reza.shafiq@gmail.com  |  [LinkedIn](https://www.linkedin.com/in/shaikrezashafiq/) | [CSP](https://www.myskillsfuture.gov.sg/csp/public/profile/nz4guushoc91db)
 
 **Project Manager | Human-Centred AI Adoption · Workflow Redesign · Measurable Organisational Change**
 

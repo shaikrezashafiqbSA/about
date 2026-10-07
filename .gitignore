@@ -1,0 +1,3 @@
+# Private master files: the single source of truth, never published.
+# Public copies are generated from them by dev/publish-skills.ps1.
+content/private/

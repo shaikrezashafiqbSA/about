@@ -37,12 +37,24 @@ const sameSet = (a, b) => a.length === b.length && [...a].every(x => b.includes(
 const eq = (name, got, want) => check(name, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`);
 
 try {
-    const res = await fetch('../content/my-skills-tree.md', { cache: 'no-store' });
-    if (!res.ok) throw new Error(res.status);
-    const text = await res.text();
+    const get = url => fetch(url, { cache: 'no-store' }).then(r => r.ok ? r.text() : null).catch(() => null);
+    const master = await get('../content/private/my-skills-tree.md');
+    const pub = await get('../content/my-skills-tree.md');
+    const text = master ?? pub;
+    if (text == null) throw new Error('neither the private master nor the public copy loaded');
+    check(master ? 'Private master found (content/private/)' : 'Private master missing: checks run on the public copy', !!master);
     const t0 = performance.now();
     const m = build(text);
     const ms = performance.now() - t0;
+
+    // Public copy: complete, and free of private material
+    if (pub && master) {
+        const p = build(pub);
+        check('Public copy has every EU and skill of the master', p.eus.size === m.eus.size && p.skills.size === m.skills.size,
+            `public ${p.eus.size}/${p.skills.size}, master ${m.eus.size}/${m.skills.size} — re-run dev/publish-skills.ps1`);
+        check('Public copy has no Claim boundary or Interview notes', ![...p.eus.values()].some(e => e.claimBoundary.length || e.extra['interview notes']));
+        check('Public copy has no email or phone', !/[\w.+-]+@[\w-]+\.[\w.]+|\+65\s*\d/.test(pub));
+    }
 
     // Counts
     eq('106 EUs', m.eus.size, 106);
@@ -58,7 +70,7 @@ try {
     eq('20 EUs with Tree links', [...m.eus.values()].filter(e => e.links.merge.length || e.links.link.length).length, 20);
 
     // Fields
-    eq('EU-NHB-37 has two Claim boundary entries', m.eus.get('EU-NHB-37').claimBoundary.length, 2);
+    if (master) eq('EU-NHB-37 has two Claim boundary entries', m.eus.get('EU-NHB-37').claimBoundary.length, 2);
     check('EU-NHB-15 keeps "Year 1 targets" as an extra field', !!m.eus.get('EU-NHB-15').extra['year 1 targets']);
     eq('EU-NHB-01 metrics split into label/value', m.eus.get('EU-NHB-01').metrics[0], { label: 'Active officers', value: '30 to 95 (3x)' });
     eq('EU-NHB-04 is V-SUPPORT only', m.eus.get('EU-NHB-04').variantOnly, 'V-SUPPORT');

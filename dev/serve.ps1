@@ -1,5 +1,5 @@
 # Minimal static file server for local preview.
-# This project has no Node/Python toolchain, and render.html fetches the resume
+# This project has no Node/Python toolchain, and the skill tree fetches its
 # markdown at runtime -- which browsers block over file://. Run this from the
 # project root, then open http://localhost:8000/ instead of double-clicking
 # index.html.
