@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill tree parser checks</title>
+<style>
+    body { font: 14px/1.5 "Segoe UI", system-ui, sans-serif; max-width: 860px; margin: 32px auto; padding: 0 16px; color: #1f2744; background: #fbf8f1; }
+    h1 { font-size: 20px; }
+    li { margin: 4px 0; list-style: none; }
+    .pass::before { content: "✔ "; color: #1d7a46; }
+    .fail::before { content: "✘ "; color: #b3261e; }
+    .fail { color: #b3261e; }
+    code, pre { font: 12px ui-monospace, Consolas, monospace; }
+    pre { background: #fff; border: 1px solid #ddd; padding: 10px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Skill tree parser checks</h1>
+<p id="summary">Running…</p>
+<ul id="out"></ul>
+<h2>Validation report</h2>
+<pre id="report"></pre>
+<script type="module">
+import { build, evidenceAt, search, nextEuId } from '../web/skilltree/model.js';
+
+const out = document.getElementById('out');
+let pass = 0, fail = 0;
+function check(name, ok, detail = '') {
+    const li = document.createElement('li');
+    li.className = ok ? 'pass' : 'fail';
+    li.textContent = name + (ok || !detail ? '' : ` — ${detail}`);
+    out.appendChild(li);
+    ok ? pass++ : fail++;
+}
+const sameSet = (a, b) => a.length === b.length && [...a].every(x => b.includes(x));
+const eq = (name, got, want) => check(name, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`);
+
+try {
+    const res = await fetch('../content/my-skills-tree.md', { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    const text = await res.text();
+    const t0 = performance.now();
+    const m = build(text);
+    const ms = performance.now() - t0;
+
+    // Counts
+    eq('106 EUs', m.eus.size, 106);
+    eq('45 skills', m.skills.size, 45);
+    eq('5 classes', m.classes.length, 5);
+    eq('6 attributes', m.attributes.length, 6);
+    eq('12 regions', m.regions.length, 12);
+    eq('4 keystones', m.keystones.length, 4);
+    eq('7 growth targets', m.growth.length, 7);
+    // Spec v0.1 says 40 and 21: a raw grep that also counts the two field
+    // descriptions under "Skill tree use". Units carrying the fields: 39 and 20.
+    eq('39 EUs with Metrics', [...m.eus.values()].filter(e => e.metrics.length).length, 39);
+    eq('20 EUs with Tree links', [...m.eus.values()].filter(e => e.links.merge.length || e.links.link.length).length, 20);
+
+    // Fields
+    eq('EU-NHB-37 has two Claim boundary entries', m.eus.get('EU-NHB-37').claimBoundary.length, 2);
+    check('EU-NHB-15 keeps "Year 1 targets" as an extra field', !!m.eus.get('EU-NHB-15').extra['year 1 targets']);
+    eq('EU-NHB-01 metrics split into label/value', m.eus.get('EU-NHB-01').metrics[0], { label: 'Active officers', value: '30 to 95 (3x)' });
+    eq('EU-NHB-04 is V-SUPPORT only', m.eus.get('EU-NHB-04').variantOnly, 'V-SUPPORT');
+
+    // Register expansion
+    const ven = m.skills.get('SK-VEN').evidence;
+    eq('EU-NHB-32 to EU-NHB-37 expands to 6 IDs', ven.filter(id => /^EU-NHB-3[2-7]$/.test(id)).length, 6);
+    eq('EU-AS-02 to EU-AS-04 expands to 3 IDs', m.skills.get('SK-PY').evidence.filter(id => /^EU-AS-0[2-4]$/.test(id)).length, 3);
+    check('SK-SQL strips "(TimescaleDB)" qualifier', m.skills.get('SK-SQL').evidence.includes('EU-AS-03'));
+    check('SK-TAB keeps "plus 2025 certification" as a note', m.skills.get('SK-TAB').evidenceNotes.includes('plus 2025 certification'));
+
+    // Unlinked, locked, dormant
+    check('Unlinked EUs = NHB-31, EKK-12, XR-04, CIMB-01, SIN-01',
+        sameSet(m.unassigned, ['EU-NHB-31', 'EU-EKK-12', 'EU-XR-04', 'EU-CIMB-01', 'EU-SIN-01']), m.unassigned.join(', '));
+    eq('SK-LEAN is locked (rank 0)', m.skills.get('SK-LEAN').rank, 0);
+    check('SK-RPA and SK-R are dormant', m.skills.get('SK-RPA').status === 'dormant' && m.skills.get('SK-R').status === 'dormant');
+
+    // Merge groups
+    for (const g of [['EU-NHB-21', 'EU-NHB-41'], ['EU-NHB-35', 'EU-NHB-38'], ['EU-NHB-36', 'EU-NHB-42'], ['EU-NHB-25', 'EU-NHB-43'], ['EU-AS-03', 'EU-AS-08', 'EU-AS-10']])
+        check(`Merge group {${g.map(s => s.slice(3)).join(', ')}}`, sameSet(m.groupOf.get(g[0]), g), m.groupOf.get(g[0]).join(', '));
+
+    // Dates and roles
+    eq('EU-XR-01 roles via Roles field', m.eus.get('EU-XR-01').role, ['GIC', 'AS', 'CL']);
+    check('APP units are undated', m.eus.get('EU-APP-01').dates === null);
+    check('EDU units date from 2013', m.eus.get('EU-EDU-01').dates?.start === 2013 * 12);
+
+    // Timeline
+    const at = y => [...m.skills.values()].filter(s => evidenceAt(m, s, y * 12 + 11).length).map(s => s.id);
+    check('Timeline at 2019 lights exactly SK-SEC, SK-OCM, SK-TRN, SK-FAC', sameSet(at(2019), ['SK-SEC', 'SK-OCM', 'SK-TRN', 'SK-FAC']), at(2019).join(', '));
+    eq('Timeline at 2010 lights none', at(2010), []);
+
+    // Search, IDs
+    check('Search "tender" lights SK-VEN', search(m, 'tender')?.has('SK-VEN'));
+    eq('Next CL unit is CL-14', nextEuId(m, 'CL'), 'EU-CL-14');
+
+    // Append a well-formed EU at the end of the Call Levels section
+    const lines = text.split('\n');
+    const cl = m.raw.sections.find(s => s.prefix === 'CL');
+    lines.splice(cl.end, 0, '#### **EU-CL-14 · Test unit**', '', '* **Tags:** AAE', '* **Canonical:** Test.', '');
+    const m2 = build(lines.join('\n'));
+    check('Appended EU appears with no code change', m2.eus.size === 107 && m2.eus.get('EU-CL-14')?.role[0] === 'CL' && m2.unassigned.includes('EU-CL-14'));
+
+    // Never throws on garbage
+    let threw = false;
+    try { build('#### EU-X-1 · broken\n* nonsense\n| a |\n'); build(''); } catch { threw = true; }
+    check('Malformed input does not throw', !threw);
+
+    check(`Parse + model under 300ms (${ms.toFixed(1)}ms)`, ms < 300);
+
+    document.getElementById('report').textContent = m.issues.map(i => `[${i.kind}] ${i.msg}`).join('\n') || '(clean)';
+} catch (err) {
+    check('Load content/my-skills-tree.md', false, location.protocol === 'file:'
+        ? 'This page is open via file:// — serve the folder over HTTP (dev/serve.ps1).' : String(err));
+}
+document.getElementById('summary').textContent = `${pass} passed, ${fail} failed`;
+document.title = `${fail ? '✘' : '✔'} ${pass}/${pass + fail} parser checks`;
+</script>
+</body>
+</html>

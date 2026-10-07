@@ -1,0 +1,184 @@
+/* The skill tree. Same light as the palace: pale glass, indigo ink, gold edges,
+   aqua for selection. Tokens mirror web/sanctuary/sanctuary.css. */
+
+:root {
+    --ink: #1f2744;
+    --ink-soft: rgba(31, 39, 68, 0.68);
+    --gold: #b4862f;
+    --gold-light: #e2bd6a;
+    --aqua: #2f8fa0;
+    --glass: rgba(247, 251, 255, 0.93);
+    --glass-soft: rgba(247, 251, 255, 0.8);
+    --line: rgba(180, 134, 47, 0.38);
+    --line-soft: rgba(31, 39, 68, 0.14);
+    --display: "Cinzel", "Trajan Pro", Georgia, serif;
+    --body: "Amiri", Georgia, "Times New Roman", serif;
+    --ui: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --bar-h: 58px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--ui);
+    color: var(--ink);
+    background: linear-gradient(180deg, #cfe9f2 0%, #eef4f1 45%, #f8eedb 100%);
+    -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ------------------------------------------------------------------ top bar */
+
+#bar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: var(--bar-h);
+    padding: 0 16px;
+    background: var(--glass);
+    border-bottom: 1px solid var(--line);
+}
+#bar h1 { margin: 0; font: 700 17px var(--display); letter-spacing: 0.06em; white-space: nowrap; }
+.back { color: var(--ink-soft); text-decoration: none; font-size: 13px; white-space: nowrap; }
+.back:hover { color: var(--gold); }
+
+#classes { display: flex; gap: 4px; margin-left: auto; }
+#classes button {
+    padding: 6px 10px;
+    font-size: 12.5px;
+    background: transparent;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    white-space: nowrap;
+}
+#classes button[aria-checked="true"] { background: #fff; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(226, 189, 106, 0.35); }
+
+.search { position: relative; display: flex; align-items: center; }
+.search input {
+    width: 230px;
+    padding: 7px 44px 7px 12px;
+    font: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+}
+.search input:focus { outline: none; border-color: var(--aqua); }
+#q-count { position: absolute; right: 10px; font-size: 11px; color: var(--ink-soft); }
+#report-btn { padding: 6px 10px; font-size: 12px; background: #fff7e3; border: 1px solid var(--gold); border-radius: 6px; }
+
+/* -------------------------------------------------------------------- stage */
+
+#stage { position: fixed; inset: var(--bar-h) 0 0 0; }
+#tree { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; user-select: none; }
+#tree.dragging { cursor: grabbing; }
+#status { position: absolute; left: 16px; bottom: 10px; margin: 0; font-size: 12px; color: var(--ink-soft); }
+
+.zoom { position: absolute; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+.zoom button { width: 34px; height: 34px; background: var(--glass); border: 1px solid var(--line); border-radius: 8px; font-size: 16px; }
+
+/* SVG parts */
+.sector { fill: none; stroke: var(--line); stroke-width: 1; }
+.sector-fill { fill: rgba(226, 189, 106, 0.05); }
+.sector-fill.lit { fill: rgba(226, 189, 106, 0.16); }
+.sector-fill.half { fill: rgba(226, 189, 106, 0.09); }
+.region-label { font: 600 15px var(--display); fill: var(--ink); text-anchor: middle; letter-spacing: 0.04em; }
+.region-icon { font-size: 22px; text-anchor: middle; }
+
+.edge { fill: none; stroke: var(--gold); stroke-opacity: 0.18; }
+.edge.hot { stroke: var(--aqua); stroke-opacity: 0.8; }
+
+.node { cursor: pointer; transition: opacity 0.2s; }
+.node circle.face { fill: #fffdf7; stroke: var(--ink-soft); stroke-width: 1.5; }
+.node.lit circle.face { stroke: var(--gold); stroke-width: 3; filter: url(#glow); }
+.node.half circle.face { stroke: var(--gold-light); stroke-width: 2.2; }
+.node.locked circle.face { fill: #e6e6e6; stroke: #a0a0a0; stroke-dasharray: 3 3; }
+.node.dormant { opacity: 0.5; }
+.node.dim { opacity: 0.16; }
+.node.selected circle.face { stroke: var(--aqua); stroke-width: 3.5; }
+.node:focus { outline: none; }
+.node:focus-visible circle.face { stroke: var(--aqua); stroke-width: 4; }
+.node .icon { font-size: 16px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.node .pip { fill: var(--gold); }
+.node .pip.off { fill: rgba(31, 39, 68, 0.15); }
+.node .name { font-size: 10.5px; text-anchor: middle; fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: rgba(248, 244, 232, 0.85); stroke-width: 3px; }
+
+.keystone { cursor: pointer; }
+.keystone rect { fill: #fff7e3; stroke: var(--gold); stroke-width: 2.5; }
+.keystone.on rect { fill: #fff; stroke: var(--aqua); stroke-width: 3.5; }
+.keystone text { text-anchor: middle; dominant-baseline: central; }
+.hub-ring { fill: none; stroke: var(--gold); stroke-width: 3; }
+
+/* ------------------------------------------------------- tooltip and panel */
+
+#tip, #panel {
+    background: var(--glass);
+    border: 1px solid var(--gold);
+    box-shadow: 0 10px 30px rgba(31, 39, 68, 0.18);
+}
+#tip {
+    position: fixed;
+    z-index: 20;
+    max-width: 320px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    pointer-events: none;
+    border-radius: 3px;
+}
+/* Gold corner ornaments */
+#tip::before, #tip::after { content: ""; position: absolute; width: 10px; height: 10px; border: 2px solid var(--gold); }
+#tip::before { top: -4px; left: -4px; border-right: 0; border-bottom: 0; }
+#tip::after { bottom: -4px; right: -4px; border-left: 0; border-top: 0; }
+
+.t-head { display: flex; align-items: baseline; gap: 8px; font: 700 14px var(--display); }
+.t-pips { margin-left: auto; color: var(--gold); letter-spacing: 1px; font-family: var(--ui); }
+.t-sub { color: var(--ink-soft); font-size: 11.5px; margin-bottom: 6px; }
+.t-row { margin-top: 5px; }
+.t-row b { font-weight: 600; }
+.t-rule { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--line-soft); font-family: var(--body); font-size: 13.5px; font-style: italic; }
+
+#panel {
+    position: fixed;
+    z-index: 15;
+    top: calc(var(--bar-h) + 12px);
+    right: 12px;
+    bottom: 12px;
+    width: min(440px, calc(100vw - 24px));
+    overflow-y: auto;
+    padding: 18px 20px 24px;
+    border-radius: 4px;
+}
+#panel h2 { margin: 0 0 4px; font: 700 19px var(--display); }
+#panel .close { position: absolute; top: 10px; right: 12px; background: none; border: 0; font-size: 20px; }
+.card { margin-top: 14px; padding: 12px 14px; background: #fff; border: 1px solid var(--line-soft); border-left: 3px solid var(--gold-light); border-radius: 3px; }
+.card h3 { margin: 0; font-size: 14px; }
+.card .meta { font-size: 11.5px; color: var(--ink-soft); margin: 2px 0 6px; }
+.card p { margin: 6px 0 0; font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.card .scale { font-family: var(--ui); font-size: 11.5px; color: var(--ink-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.chip { padding: 2px 8px; font-size: 11.5px; background: #fff7e3; border: 1px solid var(--line); border-radius: 999px; }
+.boundary { margin-top: 8px; padding: 6px 8px; font-size: 12px; background: #fff1d6; border-left: 3px solid var(--gold); }
+.empty { color: var(--ink-soft); font-style: italic; }
+.issues li { font-size: 12px; margin: 3px 0; }
+
+@media (max-width: 900px) {
+    #bar { flex-wrap: wrap; height: auto; padding: 8px 16px; gap: 8px; }
+    #bar h1 { font-size: 15px; }
+    #classes { order: 3; width: 100%; overflow-x: auto; margin: 0; }
+    .search input { width: 160px; }
+    :root { --bar-h: 104px; }
+    #panel { top: auto; left: 0; right: 0; bottom: 0; width: 100%; max-height: 70vh; border-radius: 10px 10px 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .node { transition: none; }
+}

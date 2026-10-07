@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Tree | Shaik Reza Shafiq</title>
+    <meta name="description" content="Shaik Reza Shafiq's career as a skill tree: every node backed by evidence.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="skilltree/skilltree.css">
+</head>
+<body>
+    <header id="bar">
+        <a class="back" href="../index.html">← Back to the palace</a>
+        <h1>Skill tree</h1>
+        <div id="classes" role="radiogroup" aria-label="Class"></div>
+        <label class="search">
+            <input id="q" type="search" placeholder="Search skills, tools, JD words…" autocomplete="off">
+            <span id="q-count"></span>
+        </label>
+        <button id="report-btn" type="button" hidden>Report</button>
+    </header>
+
+    <main id="stage">
+        <svg id="tree" role="application" aria-label="Skill tree"></svg>
+        <div class="zoom">
+            <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
+            <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
+            <button type="button" data-zoom="0" aria-label="Reset view">⟲</button>
+        </div>
+        <p id="status"></p>
+    </main>
+
+    <div id="tip" role="tooltip" hidden></div>
+    <aside id="panel" hidden aria-live="polite"></aside>
+
+    <script type="module" src="skilltree/tree.js"></script>
+</body>
+</html>
