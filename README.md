@@ -7,8 +7,10 @@ straight to GitHub Pages.
 |---|---|
 | `index.html` | The landing page: a crystal palace, drawn in code, where a scribe (you can walk him around) studies, writes and forges swords. Menu docked right. See `web/sanctuary/README.md`. |
 | `web/render.html` | The styled CV, rendered from `content/`. |
-| `web/sanctuary/` | The 2D scene, the scribe, his controls, and the "Speak with him" chat behind `index.html`. |
-| `content/` | Resume and pitch in Markdown — the source of truth for the pages above and the chat. |
+| `web/sanctuary/` | The 2D scene, the scribe, his controls, and the "Talk to me" contact card behind `index.html`. |
+| `web/skills.html`, `web/skilltree/` | The career skill tree, read at runtime from `content/my-skills-tree.md`. Owner report on localhost or with `?edit`. |
+| `content/` | Resume, pitch and `my-skills-tree.md` in Markdown — the source of truth for the pages above. |
+| `dev/test-parser.html` | Browser-run checks of the skill tree parser against the real file. |
 | `dev/serve.ps1` | Minimal local static server. |
 
 **Resume Render** (markdown → styled CV / .docx) lives in its own repo and is linked from the menu:

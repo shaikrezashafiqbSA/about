@@ -42,15 +42,13 @@ way (the menu can be collapsed with the button beside it).
 |---|---|
 | `art.js` | How everything looks: asset loading, the baked palace, the sky/hills/armies/ants backdrop, the rigged scribe, tools, parchment drawings, `LAYOUT` and `STATIONS`. |
 | `scene.js` | What happens: his jobs (generators), the carpet, fire/metal/sparks, the library sequence, camera, input. |
-| `chat.js` | Preset answers and the on-device model engines. |
-| `app.js` | Wiring: ticker, dialogue panel, menu. |
+| `app.js` | Wiring: ticker, contact card, menu. |
 | `sanctuary.css` | Everything that floats over the canvas. |
 
-## Speak with Al-Katib
+## Talk to me
 
-Preset questions are hand-written from `content/elevator_pitch.md` and the CV and answer
-instantly. A free question needs the opt-in on-device model (WebLLM over WebGPU, or Chrome's
-Gemini Nano), grounded only in the bio and CV. Nothing leaves the browser.
+Clicking Al-Katib (or "Talk to me" in the menu) turns him toward you and opens a contact
+card: a direct LinkedIn link to the real person, not a script or a chatbot.
 
 ## Running it
 

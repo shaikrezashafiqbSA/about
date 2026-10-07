@@ -1,23 +1,16 @@
-// Wiring: the scene (scene.js), his answers (chat.js) and the chrome around them.
+// Wiring: the scene (scene.js), the contact card and the chrome around them.
 
 import { createSanctuary } from "./scene.js";
 import { drawPortrait } from "./art.js";
-import { PRESETS, GREETING, NEEDS_MIND, createMind } from "./chat.js";
 
 const NAME = "Shaik";
 const $ = id => document.getElementById(id);
 
 const stage = $("stage");
 const ticker = $("ticker");
-const panel = $("chat");
-const thread = $("thread");
-const chips = $("chips");
-const input = $("question");
-const askBtn = $("ask");
+const panel = $("contact");
 const veil = $("veil");
 const menu = $("menu");
-const mindBox = $("mind");
-const mindLog = $("mind-log");
 const forgedEl = $("forged-count");
 
 function el(tag, className, text) {
@@ -50,7 +43,7 @@ scene = createSanctuary({
     canvas: stage,
     markerEl: $("npc-marker"),
     getFrame,
-    onNpcClick: openChat,
+    onNpcClick: openContact,
     onStatus: text => { statusText = text; renderTicker(); }
 });
 
@@ -86,165 +79,37 @@ if (!scene) {
     renderTicker();
 }
 
-// ------------------------------------------------------------------------- chat
-
-const mind = createMind((text, bad) => {
-    mindLog.textContent = text;
-    mindLog.classList.toggle("bad", !!bad);
-});
+// ---------------------------------------------------------------------- contact
+// No bot speaks for him: the card is a direct line to the real person.
 
 drawPortrait($("portrait"));
 
-let pending = null;      // a free question waiting on the model to wake
-let busy = false;
-let typing = 0;
-
-function scrollDown() { thread.scrollTop = thread.scrollHeight; }
-
-function addUser(text) {
-    const m = el("div", "msg user", text);
-    thread.append(m);
-    scrollDown();
-}
-
-/** Type a reply out, so he seems to be speaking it. */
-function addBot(text, instant) {
-    const m = el("div", "msg bot");
-    thread.append(m);
-    if (instant) { m.textContent = text; scrollDown(); return Promise.resolve(m); }
-    const token = ++typing;
-    if (scene) scene.setSpeaking(true);
-    return new Promise(resolve => {
-        let i = 0;
-        const tick = () => {
-            if (token !== typing) { m.textContent = text; resolve(m); return; }
-            i = Math.min(text.length, i + 2);
-            m.textContent = text.slice(0, i);
-            scrollDown();
-            if (i < text.length) setTimeout(tick, 14);
-            else { if (scene) scene.setSpeaking(false); resolve(m); }
-        };
-        tick();
-    });
-}
-
-function addThinking() {
-    const m = el("div", "msg bot pending", "Thinking...");
-    thread.append(m);
-    scrollDown();
-    if (scene) scene.setSpeaking(true);
-    return m;
-}
-
-function setBusy(v) {
-    busy = v;
-    askBtn.disabled = v;
-    chips.classList.toggle("disabled", v);
-}
-
-function buildChips() {
-    chips.innerHTML = "";
-    PRESETS.forEach(p => {
-        const b = el("button", "chip", p.q);
-        b.type = "button";
-        b.onclick = () => {
-            if (busy) return;
-            setBusy(true);
-            addUser(p.q);
-            addBot(p.a).then(() => setBusy(false));
-        };
-        chips.append(b);
-    });
-}
-buildChips();
-
-async function askFree(question) {
-    if (!mind.isReady()) {
-        pending = question;
-        mindBox.classList.add("open");
-        await addBot(NEEDS_MIND, true);
-        return;
-    }
-    const thinking = addThinking();
-    try {
-        const reply = await mind.ask(question);
-        thinking.remove();
-        await addBot(reply || "I have nothing in the ledger on that.");
-    } catch (err) {
-        thinking.remove();
-        await addBot("That failed: " + err.message, true);
-    } finally {
-        if (scene) scene.setSpeaking(false);
-    }
-}
-
-async function submit() {
-    const q = input.value.trim();
-    if (!q || busy) return;
-    input.value = "";
-    setBusy(true);
-    addUser(q);
-    await askFree(q);
-    setBusy(false);
-    input.focus();
-}
-
-askBtn.onclick = submit;
-input.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
-
-function awakenWith(engineName) {
-    if (mind.isLoading()) return;
-    mind.select(engineName);
-    document.querySelectorAll(".engine").forEach(b => b.classList.toggle("active", b.dataset.engine === engineName));
-    mindLog.textContent = "Starting the model...";
-    mind.awaken().then(async ok => {
-        if (!ok || !pending) return;
-        const q = pending;
-        pending = null;
-        setBusy(true);
-        await askFree(q);
-        setBusy(false);
-    });
-}
-document.querySelectorAll(".engine").forEach(b => {
-    b.onclick = () => awakenWith(b.dataset.engine);
-});
-
-// -------------------------------------------------------------- open and close
-
-let greeted = false;
-
-function openChat() {
+function openContact() {
     document.body.classList.remove("menu-open");
     talking = true;
     panel.classList.add("open");
     veil.classList.add("open");
     document.body.classList.add("talking");
     if (scene) scene.setTalking(true);
-    if (!greeted) {
-        greeted = true;
-        addBot(GREETING);
-    }
-    setTimeout(() => input.focus(), 250);
+    setTimeout(() => $("contact-linkedin").focus(), 250);
 }
 
-function closeChat() {
+function closeContact() {
     talking = false;
     panel.classList.remove("open");
     veil.classList.remove("open");
     document.body.classList.remove("talking");
-    typing++;
-    if (scene) { scene.setTalking(false); scene.setSpeaking(false); }
+    if (scene) scene.setTalking(false);
 }
 
-$("speak-npc").onclick = openChat;
-$("chat-close").onclick = closeChat;
-veil.onclick = closeChat;
-$("npc-marker").onclick = openChat;
+$("talk-to-me").onclick = openContact;
+$("contact-close").onclick = closeContact;
+veil.onclick = closeContact;
+$("npc-marker").onclick = openContact;
 $("menu-toggle").onclick = () => {
     // on a wide screen the menu collapses to give the palace the whole window; on a phone it is a drawer
     document.body.classList.toggle(window.innerWidth >= 900 ? "menu-collapsed" : "menu-open");
 };
-document.addEventListener("keydown", e => { if (e.key === "Escape" && talking) closeChat(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && talking) closeContact(); });
 
 window.sanctuary = { scene };
